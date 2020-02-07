@@ -24,6 +24,7 @@ struct ServiceTestOperations
     void (*testDataSap)(struct ServiceTest *Test);
     void (*testManagementSap)(struct ServiceTest *Test);
     void (*testMCSPRequest)(struct ServiceTest *Test);
+    void (*testMLMERScanRequest)(struct ServiceTest *Test);
     void (*testSocket)(struct ServiceTest *Test);
 
 };
@@ -44,8 +45,9 @@ static void socketUpdate(struct Observer *Observer, struct UnixSocket *Socket,
                          ServiceMessageHeader *Header, uint8_t *TransmittedData);
 
 static void testDataSap(struct ServiceTest *Test);
-static void testManagementSap(struct ServiceTest *Test);
 static void testMCSPRequest(struct ServiceTest *Test);
+static void testManagementSap(struct ServiceTest *Test);
+static void testMLMEScanRequest(struct ServiceTest *Test);
 static void testSocket(struct ServiceTest *Test);
 
 static void testCCA(struct ManagementSap *Sap);

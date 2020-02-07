@@ -24,8 +24,8 @@ static void respondRequest(struct UnixSocket *Socket)
     Socket->management_sap.operations.createPLMETrxMessage(&Socket->management_sap,
                                                            confirm, Socket->management_sap.received.message->status_or_priorty);
 
-//    Socket->operations.setData(Socket, Socket->management_sap.transmitted.raw,
-//                               Socket->management_sap.transmitted.index);
+    Socket->operations.setData(Socket, Socket->management_sap.transmitted.raw,
+                               Socket->management_sap.transmitted.index);
 }
 
 

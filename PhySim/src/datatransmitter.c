@@ -16,6 +16,7 @@ static void confirmrequest(struct DataSap *Sap)
 
 static void respondRequest(struct UnixSocket *Socket)
 {
+
     struct DataSap *sap = &Socket->data_sap;
 
     printf("Payload: ");
@@ -28,6 +29,7 @@ static void respondRequest(struct UnixSocket *Socket)
     sap->operations.createPDMessage(sap ,confirm, "", 1);
 
     Socket->operations.setData(Socket, sap->transmit.raw, sap->transmit.index);
+
 }
 
 
@@ -65,9 +67,7 @@ static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket,
             default:
                 break;
         }
-
     }
-
 }
 
 
@@ -87,7 +87,6 @@ static int dataTransmitterHandle(struct ChainBase *Base, uint8_t *Data, uint8_t 
     Base->soket->operations.setData(Base->soket,
                                     sap->transmit.raw,
                                     sap->transmit.index);
-
 
     clock_gettime(CLOCK_REALTIME, &ts);
 

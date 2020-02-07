@@ -20,4 +20,5 @@ add_executable(${PROJECT_NAME} "main.c"
                                "src/datasap.c"
                                "src/managementsap.c"
                                "src/servicetest.c"
+                               "src/plmeset.c"
                                )

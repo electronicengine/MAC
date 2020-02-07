@@ -19,11 +19,11 @@ static void respondRequest(struct UnixSocket *Socket)
 {
     printf("respondRequest CCA\n");
 
-    struct ManagementSap *sap = &Socket->management_sap;
+//    struct ManagementSap *sap = &Socket->management_sap;
 
-    sap->operations.createPLMECCAMessage(sap ,confirm);
+//    sap->operations.createPLMECCAMessage(sap ,confirm);
 
-    Socket->operations.setData(Socket, sap->transmitted.raw, sap->transmitted.index);
+//    Socket->operations.setData(Socket, sap->transmitted.raw, sap->transmitted.index);
 }
 
 

@@ -123,7 +123,6 @@ static int setData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size
         return rc;
     }
 
-
 }
 
 
@@ -146,7 +145,6 @@ static int openPort(struct UnixSocket *Socket)
 {
 
     int len, rc;
-
 
     memset(&Socket->server_sockaddr, 0, sizeof(struct sockaddr_un));
     memset(&Socket->client_sockaddr, 0, sizeof(struct sockaddr_un));
@@ -208,7 +206,6 @@ static int openPort(struct UnixSocket *Socket)
 
 //    setsockopt(Socket->server_sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
 //    setsockopt(Socket->client_sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout));
-
 
 }
 

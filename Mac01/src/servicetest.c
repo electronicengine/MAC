@@ -20,11 +20,13 @@ void initServiceTest(struct ServiceTest *Test, struct MacService *Mac)
     Test->mac = Mac;
     initObserver(&Test->observer);
 
+    Test->operations.testMLMERScanRequest = testMLMEScanRequest;
     Test->operations.testMCSPRequest = testMCSPRequest;
     Test->operations.testSocket = testSocket;
     Test->operations.testDataSap = testDataSap;
     Test->operations.testManagementSap = testManagementSap;
     Test->observer.operation.update = socketUpdate;
+
 
 
     sem_init(&mutex, 0, 0);
@@ -85,36 +87,6 @@ static void testSocket(struct ServiceTest *Test)
 
 
     subject->operations.removeObserver(subject, &Test->observer);
-
-}
-
-
-
-static void testMCSPRequest(struct ServiceTest *Test)
-{
-
-    struct UnixSocket *socket = &Test->mac->unix_sock;
-    struct ChainBase *chain = &Test->mac->Chain;
-    struct MacService *mac = Test->mac;
-
-    const char *data = "hello world";
-    uint16_t length = 11 ;
-    int ret;
-
-
-    chain->operations.addHandle(chain, &mac->RxOn.base);
-    chain->operations.addHandle(chain, &mac->cca.base);
-    chain->operations.addHandle(chain, &mac->TxOn.base);
-    chain->operations.addHandle(chain, &mac->Transmitter.base);
-    chain->operations.addHandle(chain, &mac->TrxOff.base);
-
-    ret = chain->operations.handle(chain, chain->next_chain, (uint8_t *)data, length);
-
-    if(ret == 0)
-        printf("**testMCSPRequest passed**\n");
-    else
-        printf("**testMCSPRequest error**\n");
-
 
 }
 
@@ -267,3 +239,52 @@ void testSetTrx(struct ManagementSap *Sap)
     printf("**testSetTrx is successfull**\n");
 
 }
+
+void testMLMEScanRequest(struct ServiceTest *Test)
+{
+
+
+    struct UnixSocket *socket = &Test->mac->unix_sock;
+    struct ChainBase *chain = &Test->mac->Chain;
+    struct MacService *mac = Test->mac;
+
+
+    chain->operations.addHandle(chain, &mac->RxOn.base);
+
+
+
+
+
+
+
+}
+
+
+static void testMCSPRequest(struct ServiceTest *Test)
+{
+
+    struct UnixSocket *socket = &Test->mac->unix_sock;
+    struct ChainBase *chain = &Test->mac->Chain;
+    struct MacService *mac = Test->mac;
+
+    const char *data = "hello world";
+    uint16_t length = 11 ;
+    int ret;
+
+
+    chain->operations.addHandle(chain, &mac->RxOn.base);
+    chain->operations.addHandle(chain, &mac->cca.base);
+    chain->operations.addHandle(chain, &mac->TxOn.base);
+    chain->operations.addHandle(chain, &mac->Transmitter.base);
+    chain->operations.addHandle(chain, &mac->TrxOff.base);
+
+    ret = chain->operations.handle(chain, chain->next_chain, (uint8_t *)data, length);
+
+    if(ret == 0)
+        printf("**testMCSPRequest passed**\n");
+    else
+        printf("**testMCSPRequest error**\n");
+
+
+}
+

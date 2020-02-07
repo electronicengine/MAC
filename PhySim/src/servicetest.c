@@ -92,6 +92,8 @@ static void testSocket(struct ServiceTest *Test)
 
 }
 
+
+
 static void testMCSPRequest(struct ServiceTest *Test)
 {
 
@@ -213,11 +215,11 @@ void testCCA(struct ManagementSap *Sap)
         return;
     }
 
-
     printf("**testCCA is successfull**\n");
 
-
 }
+
+
 
 void testSetTrx(struct ManagementSap *Sap)
 {
@@ -258,6 +260,5 @@ void testSetTrx(struct ManagementSap *Sap)
     }
 
     printf("**testSetTrx is successfull**\n");
-
 
 }

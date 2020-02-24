@@ -5,7 +5,7 @@
 
 #include <inttypes.h>
 
-#define AVAILABLE_MESSAGE               4
+#define AVAILABLE_MESSAGE               10
 #define SERVICE_MESSAGE_HEADER_SIZE     4
 #define PAYLOAD_LINK_QUALITY_SIZE       1
 #define PAYLOAD_REASON_SIZE             1
@@ -18,6 +18,7 @@
 #define FAIL        -1
 #define SUCCESS     0
 
+#define DATA_RECEIVE_RETURN         3
 #define DATA_COMMAND_RETURN         2
 #define MANAGEMENT_COMMAND_RETURN   1
 
@@ -58,7 +59,8 @@ typedef enum
     assotiate,
     disassotiate,
     cca,
-    transmit
+    transmit,
+    receive,
 
 }ServiceMessageSubType;
 

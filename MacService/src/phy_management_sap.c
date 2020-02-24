@@ -26,7 +26,7 @@ static int execute(struct PhyCommand *Command, ServiceMessage *Message)
             if(setTrx(sap, Message) != -1)
                 return MANAGEMENT_COMMAND_RETURN;
             else
-                return -1;
+                return FAIL;
 
             break;
         case cca:
@@ -34,7 +34,7 @@ static int execute(struct PhyCommand *Command, ServiceMessage *Message)
             if(setCca(sap, Message) != -1)
                 return MANAGEMENT_COMMAND_RETURN;
             else
-                return -1;
+                return FAIL;
 
             break;
         default:
@@ -66,14 +66,15 @@ static int setCca(struct PhyManagementSap *Sap, ServiceMessage *Message)
 
     sock->ops.transmitData(sock, Sap->command.raw_data_fms, data_index);
 
-    if(ret != -1)
+    if(ret != FAIL)
         ret = sock->ops.receiveData(sock, Sap->command.raw_data_fms, data_index);
-        if(ret != -1)
-            return 0;
+        if(ret != FAIL)
+            return SUCCESS;
         else
             return ret;
 
-    return 0;
+
+    return SUCCESS;
 
 }
 
@@ -106,14 +107,14 @@ static int setTrx(struct PhyManagementSap *Sap, ServiceMessage *Message)
 
     ret = sock->ops.transmitData(sock, Sap->command.raw_data_fms, data_index);
 
-    if(ret != -1)
+    if(ret != FAIL)
         sock->ops.receiveData(sock, Sap->command.raw_data_fms, data_index);
-            if(ret != -1)
-                return 0;
+            if(ret != FAIL)
+                return SUCCESS;
             else
-                return -1;
+                return FAIL;
 
-    return 0;
+    return SUCCESS;
 
 }
 

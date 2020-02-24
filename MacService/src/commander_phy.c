@@ -1,5 +1,5 @@
 #include "commander_phy.h"
-
+#include "mac_frames.h"
 
 
 void initCommanderPhy(struct CommanderPhy *Commander);
@@ -18,57 +18,62 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
         case cca:
 
             if(((PLMECCA *)Message->payload)->reason == confirm)
-                return 0;
+                return SUCCESS;
 
             else
-                return -1;
+                return FAIL;
 
         case set_trx:
 
             if(((PLMESetTRX *)Message->payload)->reason == confirm)
-                return 0;
+                return SUCCESS;
 
             else
-                return -1;
+                return FAIL;
 
         case transmit:
 
+
             if(((PhyData *)Message->payload)->reason == confirm)
-                return 0;
-            else if(((PhyData *)Message->payload)->reason == indication ||
-                    ((PhyData *)Message->payload)->reason == response)
+                return SUCCESS;
+            else
+                return FAIL;
+
+        case receive:
+
+            if(((PhyData *)Message->payload)->reason == indication)
             {
                 Commander->phy_indication_data = Message;
-                return 0;
+                return SUCCESS;
             }
             else
-                return -1;
+                return FAIL;
 
         case get:
 
             if(((PLMEGet *)Message->payload)->reason == confirm)
-                return 0;
+                return SUCCESS;
 
             else
-                return -1;
+                return FAIL;
 
             break;
 
         case set:
 
             if(((PLMESet *)Message->payload)->reason == confirm)
-                return 0;
+                return SUCCESS;
 
             else
-                return -1;
+                return FAIL;
 
         case switch_state:
 
             if(((PLMESwitch *)Message->payload)->reason == confirm)
-                return 0;
+                return SUCCESS;
 
             else
-                return -1;
+                return FAIL;
 
             break;
 
@@ -84,7 +89,7 @@ static int executeCommands(struct CommanderPhy *Commander)
 
     int try = 0;
     int ret;
-    struct PhyMessageRepo *repo ;
+    struct PhyMessageRepo *repo = &Commander->rx_repo;
     ServiceMessage *message;
 
 
@@ -92,6 +97,8 @@ static int executeCommands(struct CommanderPhy *Commander)
     {
         for(int i=0; i < Commander->command_index; i++)
         {
+
+            printf("commander phy execute command %d\n", i);
 
             int (*execute_ops)(struct PhyCommand *Command, ServiceMessage *Message) =
                     Commander->commands[i]->ops.execute;
@@ -108,9 +115,20 @@ static int executeCommands(struct CommanderPhy *Commander)
                 else
                 {
                     if(ret == MANAGEMENT_COMMAND_RETURN)
+                    {
+                        printf("MANAGEMENT_COMMAND_RETURN\n");
                         message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fms);
-                    if(ret == DATA_COMMAND_RETURN)
+                    }
+                    else if(ret == DATA_COMMAND_RETURN)
+                    {
+                        printf("DATA_COMMAND_RETURN\n");
                         message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
+                    }
+                    else if(ret == DATA_RECEIVE_RETURN)
+                    {
+                        printf("DATA_RECEIVE_RETURN\n");
+                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
+                    }
 
                     ret = checkMessage(Commander, message);
 
@@ -123,12 +141,13 @@ static int executeCommands(struct CommanderPhy *Commander)
 
             }while(try > TRYOUT);
 
-            if(ret != 0)
-                return ret;
+            if(ret == FAIL)
+                break;
+
         }
     }
 
-    return SUCCESS;
+    return ret;
 }
 
 
@@ -136,6 +155,7 @@ static int executeCommands(struct CommanderPhy *Commander)
 static int appendCommand(struct CommanderPhy *Commander, struct PhyCommand *Command, ServiceMessage *Message)
 {
 
+    printf("commander phy append command %d\n", Commander->command_index);
     Commander->commands[Commander->command_index] = Command;
     Commander->messages[Commander->command_index++] = Message;
 

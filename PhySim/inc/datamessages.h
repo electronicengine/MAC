@@ -28,13 +28,13 @@ typedef struct
 typedef struct
 {
 
-//    enum MassageReason   reason;
-    uint64_t        destination_address : 48;
-    uint64_t        source_address : 48;
+    MassageReason   reason;
+    uint8_t         destination_address[6]; //
+    uint8_t         source_address[6];
     uint8_t         frame_handle;
     uint8_t         *frame;
     uint8_t         protect_enable;
-    uint64_t        timestamp : 48;
+    uint8_t        timestamp[6];
 
 }MCSPData;
 

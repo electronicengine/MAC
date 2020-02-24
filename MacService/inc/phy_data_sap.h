@@ -8,7 +8,9 @@ struct PhyDataSap;
 
 struct PhyDataSapOperations
 {
-    int (*dataRequest)(struct PhyDataSap *Sap, ServiceMessage *PhyMessage);
+    int (*dataTransmitRequest)(struct PhyDataSap *Sap, ServiceMessage *PhyMessage);
+    int (*dataReceiveRequest)(struct PhyDataSap *Sap, ServiceMessage *PhyMessage);
+
 };
 
 struct PhyDataSap

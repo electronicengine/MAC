@@ -11,8 +11,8 @@ int initSocket(struct UnixSocket *Socket)
 {
     initSubject(&Socket->subject);
 
-    initDataSap(&Socket->data_sap);
-    initManagementSap(&Socket->management_sap);
+    initMacMessageRepo(&Socket->mac_repo);
+    initPhyMessageRepo(&Socket->phy_repo);
 
     Socket->operations.closePort = closePort;
     Socket->operations.getData = getData;
@@ -39,12 +39,11 @@ static void *listenSocket(void *Socket)
 {
 
     int bytes_rec;
-    uint8_t *transmitted_data;
+    uint8_t transmitted_data[MAX_TRANSFER_SIZE];
     struct UnixSocket *sock = Socket;
     struct Subject *subject = &sock->subject;
-    ServiceMessageHeader header;
+    ServiceMessage *message;
 
-    transmitted_data = malloc(MAX_TRANSFER_SIZE);
     printf("Socket Thread is started...\n");
 
     openPort(sock);
@@ -62,12 +61,9 @@ static void *listenSocket(void *Socket)
         if(bytes_rec > 0)
         {
 
-            header.type = transmitted_data[0];
-            header.sub_type = transmitted_data[1];
-            header.length = transmitted_data[2];
-            header.length |= transmitted_data[3];
+            message = sock->phy_repo.setServiceData(&sock->phy_repo, transmitted_data);
 
-            subject->operations.notifyObservers(subject, sock, &header, transmitted_data);
+            subject->operations.notifyObservers(subject, sock, message);
 
         }
 
@@ -75,7 +71,6 @@ static void *listenSocket(void *Socket)
 
     printf("Socket Thread is ending...\n");
 
-    free(transmitted_data);
 
 }
 
@@ -212,6 +207,5 @@ static int openPort(struct UnixSocket *Socket)
 
 int deinitSocket(struct UnixSocket *Socket)
 {
-    deinitDataSap(&Socket->data_sap);
-    deinitManagementSap(&Socket->management_sap);
+
 }

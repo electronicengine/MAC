@@ -6,24 +6,6 @@ static int appendCommand(struct CommanderMac *Commander, struct MacCommand *Comm
 static int clearCommands(struct CommanderMac *Commander);
 
 
-static int checkMessage(struct CommanderMac *Commander, ServiceMessage *Message)
-{
-    switch (Message->header.sub_type)
-    {
-        case transmit:
-
-            return SUCCESS;
-
-
-            break;
-        default:
-            break;
-    }
-
-    return FAIL;
-}
-
-
 
 static int executeCommands(struct CommanderMac *Commander)
 {
@@ -37,29 +19,36 @@ static int executeCommands(struct CommanderMac *Commander)
 
         for (int i=0; i < Commander->command_index; i++)
         {
+
             int (*execute_ops)(struct MacCommand *Command, ServiceMessage *Message) =
                     Commander->commands[i]->ops.execute;
-
 
                 ret = execute_ops(Commander->commands[i], Commander->messages[i]);
 
                 if(ret == FAIL)
                     return ret;
+
                 else
                 {
-                    if(ret == DATA_COMMAND_RETURN)
+                    if(ret == DATA_RECEIVE_RETURN)
                     {
+                        printf("MAC DATA_RECEIVE_RETURN\n");
+
                         mac_message = Commander->rx_repo.setServiceMessage(&Commander->rx_repo,
                                                                            Commander->commands[i]->mac_indication_data);
-                        ret = checkMessage(Commander, mac_message);
 
-                        if(ret == SUCCESS)
-                            Commander->indication_message = mac_message;
+                        Commander->indication_message = mac_message;
 
+                    }
+                    if(ret == DATA_COMMAND_RETURN)
+                    {
+                        printf("MAC DATA_COMMAND_RETURN\n");
+                        // to do something
 
                     }
                     else if(ret == MANAGEMENT_COMMAND_RETURN)
                     {
+                        printf("MAC MANAGEMENT_COMMAND_RETURN\n");
                         // to do something
 
                     }
@@ -78,10 +67,12 @@ static int executeCommands(struct CommanderMac *Commander)
 static int appendCommand(struct CommanderMac *Commander, struct MacCommand *Command, ServiceMessage *Message)
 {
 
-    printf("commander mac append message\n");
+    printf("commander mac append message %d\n", Commander->command_index);
+
 
     Commander->commands[Commander->command_index] = Command;
-    Commander->messages[Commander->command_index++] = Message;
+    Commander->messages[Commander->command_index] = Message;
+    Commander->command_index++;
 
 }
 
@@ -90,6 +81,7 @@ static int appendCommand(struct CommanderMac *Commander, struct MacCommand *Comm
 static int clearCommands(struct CommanderMac *Commander)
 {
 
+    printf("commander mac clear commands\n");
     for(int i=0; i<Commander->command_index; i++)
     {
         Commander->commands[i] = 0;

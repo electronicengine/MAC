@@ -59,15 +59,14 @@ static int subjectOpsRemoveObserver(struct Subject *Subject, struct Observer *Ob
 
 
 
-static int subjectOpsNotifyObservers(struct Subject *Subject, struct UnixSocket *Socket,
-                                     ServiceMessageHeader *Header,  uint8_t *TransmittedData)
+static int subjectOpsNotifyObservers(struct Subject *Subject, struct UnixSocket *Socket, ServiceMessage *Message)
 {
 
     for (int i = 0; i < Subject->observer_queue; ++i)
     {
         if (Subject->observers[i])
         {
-            Subject->observers[i]->operation.update(Subject->observers[i], Socket, Header, TransmittedData);
+            Subject->observers[i]->operation.update(Socket, Message);
 		}
 	}
 

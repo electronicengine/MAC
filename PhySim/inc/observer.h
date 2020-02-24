@@ -32,8 +32,7 @@ struct UnixSocket;
 
 struct ObserverOperation
 {
-        void (*update)(struct Observer *, struct UnixSocket *Socket,
-                       ServiceMessageHeader *Header, uint8_t *TransmittedData);
+        void (*update)(struct UnixSocket *Socket, ServiceMessage *Message);
 };
 
 

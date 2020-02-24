@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "mac_command.h"
 #include "messagetypes.h"
+#include "mac_frames.h"
 
 #define SETTRX_SIZE    1
 
@@ -14,7 +15,8 @@ struct MacDataSap;
 
 struct MacDataSapOperations
 {
-    int (*dataRequest)(struct MacDataSap *Sap, ServiceMessage *MacMessage);
+    int (*dataTransmitRequest)(struct MacDataSap *Sap, ServiceMessage *MacMessage);
+    int (*dataReceiveRequest)(struct MacDataSap *Sap, ServiceMessage *MacMessage);
 };
 
 

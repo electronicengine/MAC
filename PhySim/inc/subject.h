@@ -38,8 +38,7 @@ struct SubjectOperations
 
         int (*registerObserver)(struct Subject *, struct Observer *Observer);
         int (*removeObserver)(struct Subject *, struct Observer *Observer);
-        int (*notifyObservers)(struct Subject *, struct UnixSocket *Socket,
-                               ServiceMessageHeader *Header, uint8_t *TransmitData);
+        int (*notifyObservers)(struct Subject *, struct UnixSocket *Socket, ServiceMessage *Message);
 
 };
 
@@ -48,9 +47,10 @@ struct SubjectOperations
 struct Subject
 {
 
-        struct SubjectOperations operations;
-        struct Observer *observers[32];
-        int observer_queue;
+
+    struct SubjectOperations operations;
+    struct Observer *observers[32];
+    int observer_queue;
 
 };
 

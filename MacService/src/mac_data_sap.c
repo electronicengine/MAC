@@ -3,7 +3,8 @@
 
 
 static int execute(struct MacCommand *Command, ServiceMessage *MacMessage);
-static int dataRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage);
+static int dataTransmitRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage);
+static int dataReceiveRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage);
 
 
 
@@ -14,20 +15,29 @@ static int execute(struct MacCommand *Command, ServiceMessage *Message)
     int ret;
 
 
-    ret = sap->ops.dataRequest(sap, Message);
-
-    Command->mac_indication_data = Command->commander_phy.phy_indication_data;
-
-    if(ret != FAIL)
-        return DATA_COMMAND_RETURN;
-    else
-        return FAIL;
+    if(Message->header.sub_type == transmit)
+    {
+        ret = sap->ops.dataTransmitRequest(sap, Message);
+        if(ret != FAIL)
+            return DATA_COMMAND_RETURN;
+    }
+    else if(Message->header.sub_type == receive)
+    {
+        ret = sap->ops.dataReceiveRequest(sap, Message);
+        if(ret != FAIL)
+        {
+            Command->mac_indication_data = Command->commander_phy.phy_indication_data;
+            return DATA_RECEIVE_RETURN;
+        }
+        else
+            return FAIL;
+    }
 
 }
 
 
 
-static int makeDataMessage(struct MacDataSap *Sap, uint8_t *Data, uint16_t Length)
+static int makeDataReceiveMessage(struct MacDataSap *Sap)
 {
 
     struct PhyMessageRepo *repo = &Sap->command.phy_messages_repo;
@@ -36,6 +46,31 @@ static int makeDataMessage(struct MacDataSap *Sap, uint8_t *Data, uint16_t Lengt
 
     ServiceMessage *phy_message = repo->getServiceMessage(repo);
     PhyData *pd = repo->getPhyData(repo);
+
+    phy_message->header.type = phy_data;
+    phy_message->header.sub_type = receive;
+    phy_message->header.length = 1;
+    phy_message->payload = 0;
+    pd->reason = request;
+    pd->payload = 0;
+    pd->link_quality = 0;
+    phy_message->payload = (uint8_t *)pd;
+    phy_message->status_or_priorty = 0;
+
+    commander->ops.appendCommand(commander, command, phy_message);
+}
+
+
+static int makeDataTransmitMessage(struct MacDataSap *Sap, uint8_t *Data, uint16_t Length)
+{
+
+    struct PhyMessageRepo *repo = &Sap->command.phy_messages_repo;
+    struct CommanderPhy *commander = &Sap->command.commander_phy;
+    struct PhyCommand *command = &Sap->command.phy_data_sap.command;
+
+    ServiceMessage *phy_message = repo->getServiceMessage(repo);
+    PhyData *pd = repo->getPhyData(repo);
+
 
     phy_message->header.type = phy_data;
     phy_message->header.sub_type = transmit;
@@ -105,23 +140,44 @@ static int makeCCAMessage(struct MacDataSap *Sap)
 
 
 
-static int dataRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage)
+
+static int dataReceiveRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage)
+{
+    int ret = 0;
+    struct CommanderPhy *commander = &Sap->command.commander_phy;
+
+    printf("MCSP Data Receive Request\n");
+
+    makeSetTrxMessage(Sap, rx_on);
+    makeDataReceiveMessage(Sap);
+
+    ret = commander->ops.executeCommands(commander);
+
+    commander->ops.clearCommands(commander);
+
+    return ret;
+
+
+}
+
+
+
+static int dataTransmitRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage)
 {
 
     int ret = 0;
     struct CommanderPhy *commander = &Sap->command.commander_phy;
 
-    printf("MCSP Data Request\n");
+
+    printf("MCSP Data Transmit Request\n");
 
     makeSetTrxMessage(Sap, tx_on);
     makeSetTrxMessage(Sap, rx_on);
     makeCCAMessage(Sap);
-    makeDataMessage(Sap, MacMessage->payload, MacMessage->header.length);
+    makeDataTransmitMessage(Sap, MacMessage->payload, MacMessage->header.length);
     makeSetTrxMessage(Sap, trx_off);
 
     ret = commander->ops.executeCommands(commander);
-    if(ret != FAIL)
-        Sap->command.mac_indication_data = commander->phy_indication_data;
 
     commander->ops.clearCommands(commander);
 
@@ -136,7 +192,9 @@ void initMacDataSap(struct MacDataSap *Sap)
 
     initMacCommand(&Sap->command);
 
-    Sap->ops.dataRequest = dataRequest;
+    Sap->ops.dataTransmitRequest = dataTransmitRequest;
+    Sap->ops.dataReceiveRequest = dataReceiveRequest;
+
     Sap->command.ops.execute = execute;
 
 }

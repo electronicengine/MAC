@@ -11,9 +11,9 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <pthread.h>
-#include "datasap.h"
-#include "managementsap.h"
 
+#include "mac_message_repo.h"
+#include "phy_message_repo.h"
 
 #define MAX_TRANSFER_SIZE   1500
 #define SERVER_PATH         "/dev/mac01"
@@ -42,8 +42,8 @@ struct UnixSocket
     struct sockaddr_un server_sockaddr;
     struct sockaddr_un client_sockaddr;
 
-    struct DataSap data_sap;
-    struct ManagementSap management_sap;
+    struct MacMessageRepo mac_repo;
+    struct PhyMessageRepo phy_repo;
 
     int server_sock;
     int client_sock;

@@ -20,18 +20,14 @@ struct PhyService;
 
 struct PhyServiceOperations
 {
-    void (*sendData)(struct PhyService *Mac, uint8_t *Data, uint8_t Length);
-    void (*receiveData)(struct PhyService *Mac, uint8_t *Data, uint8_t Length);
+
 };
 
 struct PhyService
 {
-    struct ChainBase Chain;
     struct CCA  cca;
-    struct DataTransmitter Transmitter;
-    struct TRXState RxOn;
-    struct TRXState TxOn;
-    struct TRXState TrxOff;
+    struct DataTransmitter transmitter;
+    struct TRXState trx;
     struct UnixSocket unix_socket;
 
     struct PhyServiceOperations operations;
@@ -40,8 +36,6 @@ struct PhyService
 
 
 void initPhy(struct PhyService *Phy);
-static void sendData(struct PhyService *Mac, uint8_t *Data, uint8_t Length);
-static void receiveData(struct PhyService *Mac, uint8_t *Data, uint8_t Length);
 
 
 #endif

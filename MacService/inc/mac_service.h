@@ -41,6 +41,7 @@ struct MacService
 };
 
 
+
 void initMacService(struct MacService *Service);
 void deinitMacService(struct MacService *Service);
 

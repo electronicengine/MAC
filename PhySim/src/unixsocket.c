@@ -60,11 +60,8 @@ static void *listenSocket(void *Socket)
 
         if(bytes_rec > 0)
         {
-
             message = sock->phy_repo.setServiceData(&sock->phy_repo, transmitted_data);
-
             subject->operations.notifyObservers(subject, sock, message);
-
         }
 
     }
@@ -106,7 +103,6 @@ static int setData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size
         sleep(2);
         printf("waiting to socket tread\n");
     }
-
 
     rc = send(Socket->client_sock, TransmittedData, Size, 0);
 

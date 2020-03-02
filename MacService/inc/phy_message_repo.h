@@ -5,6 +5,7 @@
 #include "messagetypes.h"
 #include "datamessages.h"
 #include "managementmessages.h"
+#include "mac_frames.h"
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>

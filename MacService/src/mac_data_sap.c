@@ -58,7 +58,9 @@ static int makeDataReceiveMessage(struct MacDataSap *Sap)
     phy_message->status_or_priorty = 0;
 
     commander->ops.appendCommand(commander, command, phy_message);
+
 }
+
 
 
 static int makeDataTransmitMessage(struct MacDataSap *Sap, uint8_t *Data, uint16_t Length)
@@ -140,9 +142,18 @@ static int makeCCAMessage(struct MacDataSap *Sap)
 
 
 
+static int extractMCSPData(struct MacDataSap *Sap, ServiceMessage *PhyMessage)
+{
+
+
+
+}
+
+
 
 static int dataReceiveRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage)
 {
+
     int ret = 0;
     struct CommanderPhy *commander = &Sap->command.commander_phy;
 
@@ -152,11 +163,11 @@ static int dataReceiveRequest(struct MacDataSap *Sap, ServiceMessage *MacMessage
     makeDataReceiveMessage(Sap);
 
     ret = commander->ops.executeCommands(commander);
-
     commander->ops.clearCommands(commander);
 
-    return ret;
+    Sap->command.mac_indication_data = Sap->command.commander_phy.phy_indication_data;
 
+    return ret;
 
 }
 
@@ -168,12 +179,11 @@ static int dataTransmitRequest(struct MacDataSap *Sap, ServiceMessage *MacMessag
     int ret = 0;
     struct CommanderPhy *commander = &Sap->command.commander_phy;
 
-
     printf("MCSP Data Transmit Request\n");
 
-    makeSetTrxMessage(Sap, tx_on);
     makeSetTrxMessage(Sap, rx_on);
     makeCCAMessage(Sap);
+    makeSetTrxMessage(Sap, tx_on);
     makeDataTransmitMessage(Sap, MacMessage->payload, MacMessage->header.length);
     makeSetTrxMessage(Sap, trx_off);
 

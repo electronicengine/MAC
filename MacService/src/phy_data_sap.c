@@ -51,26 +51,26 @@ static int convertFrametoRaw(struct PhyDataSap *Sap, uint8_t *MacFrame, int *Dat
     memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)(&pollack), sizeof(*pollack));
     *DataIndex += sizeof(*pollack);
 
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->receiver_address >> 8) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->receiver_address >> 16) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->receiver_address >> 24) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->receiver_address >> 32) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->receiver_address >> 40) & 0xff;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[0];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[1];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[2];;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[3];;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[4];;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[5];;
 
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->transmitter_address >> 8) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->transmitter_address >> 16) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->transmitter_address >> 24) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->transmitter_address >> 32) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->transmitter_address >> 40) & 0xff;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[0];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[1];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[2];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[3];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[4];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[5];
 
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->auxiliary_address >> 8) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->auxiliary_address >> 16) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->auxiliary_address >> 24) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->auxiliary_address >> 32) & 0xff;
-    Sap->command.raw_data_fds[(*DataIndex)++] = (header->auxiliary_address >> 40) & 0xff;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[0];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[1];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[2];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[3];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[4];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[5];
 
     memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)sequence_control, sizeof(*sequence_control));
     *DataIndex += sizeof(*sequence_control);
@@ -158,6 +158,14 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
     convertPhyMessagetoRaw(Sap, PhyMessage->payload, &data_index);
 
     Sap->command.raw_data_fds[data_index++] = PhyMessage->status_or_priorty;
+
+    printf("data transmit raw %d: \n", data_index);
+    for(int i = 0; i < data_index; i++)
+        printf("%02X-", Sap->command.raw_data_fds[i]);
+
+    printf("\n");
+
+
 
     ret = sock->ops.transmitData(sock, Sap->command.raw_data_fds, data_index);
     if(ret != FAIL)

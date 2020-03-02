@@ -11,11 +11,10 @@ int main()
 
     MacFrameFormat mac_frame;
 
-
     char *data = "hello world";
 
-    mac_frame.header.receiver_address = 0x121212121212;
-    mac_frame.header.transmitter_address = 0x212121212121;
+//    mac_frame.header.receiver_address = 0x121212121212;
+//    mac_frame.header.transmitter_address = 0x212121212121;
 
     mac_frame.header.payload_length = 11;
     mac_frame.payload = (uint8_t *)data;

@@ -5,11 +5,18 @@
 #include <semaphore.h>
 #include <pthread.h>
 #include <time.h>
+#include "macframe.h"
+#include "datamessages.h"
+
+
+#define container_of(ptr, type, member) \
+    ((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
+
 
 struct DataTransmitterOperations
 {
 
-    void (*spiDataUpdate)(struct UnixSocket *Socket, ServiceMessage *Message);
+    void (*spiDataUpdate)(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message);
 
 };
 
@@ -20,6 +27,10 @@ struct DataTransmitter
 
         struct DataTransmitterOperations operations;
         struct Observer observer;
+
+        MCSPData mcsp_data;
+        MacFrameFormat mac_frame;
+        PhyData phy_data;
 
 };
 

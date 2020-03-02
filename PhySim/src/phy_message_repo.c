@@ -1,5 +1,5 @@
 #include "phy_message_repo.h"
-
+#include "macframe.h"
 
 static ServiceMessage *getServiceMessage(struct PhyMessageRepo *);
 
@@ -11,8 +11,6 @@ static PLMEGet *getPlmeGet(struct PhyMessageRepo *);
 static PLMESet *getPlmeSet(struct PhyMessageRepo *);
 static PLMESwitch *getPlmeSwitch(struct PhyMessageRepo *);
 static uint8_t *getRawData(struct PhyMessageRepo *);
-
-uint8_t *convertMessagetoRaw(struct PhyMessageRepo *, ServiceMessage *PhyMessage, int *Index);
 
 static ServiceMessage *setServiceMessage(struct PhyMessageRepo *, uint8_t *);
 
@@ -31,7 +29,6 @@ void initPhyMessageRepo(struct PhyMessageRepo *Repo)
     Repo->getPlmeSwitch = getPlmeSwitch;
 
     Repo->getRawData = getRawData;
-    Repo->convertMessagetoRaw = convertMessagetoRaw;
 
 }
 
@@ -42,29 +39,6 @@ void deinitPhyMessageRepo(struct PhyMessageRepo *Repo)
 
 }
 
-
-
-uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage *PhyMessage, int *Index)
-{
-
-    uint8_t *raw_data = Repo->getRawData(Repo);
-    PhyData *pd = (PhyData *)PhyMessage->payload;
-
-    raw_data[(*Index)++] = PhyMessage->header.type;
-    raw_data[(*Index)++] = PhyMessage->header.sub_type;
-    raw_data[(*Index)++] = PhyMessage->header.length & 0xff;
-    raw_data[(*Index)++] = (PhyMessage->header.length >> 8) & 0xff;
-
-    raw_data[(*Index)++] = pd->reason;
-
-    memcpy(&raw_data[*Index], pd->payload, PhyMessage->header.length);
-    (*Index) += PhyMessage->header.length;
-
-    raw_data[(*Index)++] = pd->link_quality;
-
-    return raw_data;
-
-}
 
 
 
@@ -147,6 +121,7 @@ static PLMESwitch *getPlmeSwitch(struct PhyMessageRepo *Repo)
     return &Repo->plme_switch[index++];
 
 }
+
 
 
 
@@ -235,14 +210,12 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case transmit:
 
-            printf("set transmit message\n");
-
             pd_data = Repo->getPhyData(Repo);
 
             pd_data->reason = RawData[index++];
 
             pd_data->payload = &RawData[index];
-            index += message->header.length;
+            index += message->header.length + MCSPDATA_SIZE_OFFSET + MAC_FRAME_SIZE_OFFSET;
 
             pd_data->link_quality = RawData[index++];
 

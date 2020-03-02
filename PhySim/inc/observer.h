@@ -32,7 +32,7 @@ struct UnixSocket;
 
 struct ObserverOperation
 {
-        void (*update)(struct UnixSocket *Socket, ServiceMessage *Message);
+        void (*update)(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message);
 };
 
 

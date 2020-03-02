@@ -12,7 +12,11 @@
 // three basic frame Types for the transmission of
 // data, management and control information are supported.
 
-
+#define FRAMECONTROL_SIZE       2
+#define POLLACK_SIZE            2
+#define SEQUENCECONTROL_SIZE    2
+#define MACFRAME_HEADER_SIZE    FRAMECONTROL_SIZE + POLLACK_SIZE + SEQUENCECONTROL_SIZE + 20
+#define MAC_FRAME_SIZE_OFFSET   MACFRAME_HEADER_SIZE + 4
 
 enum MacFrameTypes
 {
@@ -67,11 +71,11 @@ typedef struct
 {
     FrameControl    frame_control;                  //defining the frame type, addressing fields, and other control flags
     POLLAck         ack_information;                //contains the information necessary to identify the MSDU sequence number and the station which transmitted the acknowledged information
-    uint64_t        receiver_address : 48;          //MAC individual or group address that identifies the intended immediate recipient device(s)
-    uint64_t        transmitter_address : 48;       //MAC address that identifies the device that has transmitted the MPDU contained in the frame body field.
-    uint64_t        auxiliary_address : 48;         //offer extra information that is needed for data frame transmission. It could be OWPAN ID, source address or destination address,
+    uint8_t         receiver_address[6];            //MAC individual or group address that identifies the intended immediate recipient device(s)
+    uint8_t         transmitter_address[6];         //MAC address that identifies the device that has transmitted the MPDU contained in the frame body field.
+    uint8_t         auxiliary_address[6];           //offer extra information that is needed for data frame transmission. It could be OWPAN ID, source address or destination address,
     SequenceControl sequence_control;               //identify the MSDU sequence number
-    uint8_t         *auxiliary_security_header;     //a variable length and specifies information required for security processing
+//    uint8_t         *auxiliary_security_header;     //a variable length and specifies information required for security processing
     uint16_t        payload_length;                 // bence eklenmesi gereken değişken
 
 }MacFrameHeader;

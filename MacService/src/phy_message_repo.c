@@ -133,6 +133,7 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
     PLMESwitch *plme_switch;
     PhyData *pd_data;
 
+
     message->header.type = RawData[index++];
     message->header.sub_type = RawData[index++];
     message->header.length = RawData[index++];
@@ -230,7 +231,7 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
             pd_data->reason = RawData[index++];
 
             pd_data->payload = &RawData[index];
-            index += message->header.length;
+            index += message->header.length + MAC_FRAME_SIZE_OFFSET + MCSPDATA_SIZE_OFFSET;
 
             pd_data->link_quality = RawData[index++];
 

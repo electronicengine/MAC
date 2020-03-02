@@ -27,9 +27,9 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
 {
 
     int ret;
+    ServiceMessage *indication_message;
     ServiceMessage *message = Service->mac_message_repo.getServiceMessage(&Service->mac_message_repo);
     MCSPData *mcsp_data = Service->mac_message_repo.getMcspData(&Service->mac_message_repo);
-    ServiceMessage *indication_message;
 
     struct CommanderMac *commander = &Service->commander_mac;
     struct MacDataSap *sap = &Service->mac_data_sap;
@@ -47,6 +47,12 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
     memcpy(mcsp_data->destination_address, (uint8_t *)&destination_addr, sizeof(mcsp_data->destination_address));
     memcpy(mcsp_data->source_address, (uint8_t *)&source_addr, sizeof(mcsp_data->source_address));
 
+    printf("destination addr: ");
+    for(int i = 0; i<6; i++)
+        printf("%02X-", mcsp_data->destination_address[i]);
+
+    printf("\n");
+
     mcsp_data->frame_handle = 12;
     mcsp_data->frame = Data;
     mcsp_data->protect_enable = 3;
@@ -62,10 +68,23 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
     ret = commander->ops.executeCommands(commander);
     commander->ops.clearCommands(commander);
 
-    if(ret != FAIL)
-        printf("MCSP Transmit Request is SUCCESSFUL\n");
+    if(ret == SUCCESS)
+    {
+        printf("MCSP Transmit Request is SUCCESSFUL\n");  
+    }
     else
+    {
         printf("MCSP Transmite Request is FAILED\n");
+    }
+}
+
+
+
+static int convertRawtoMacFrame(MCSPData *Mcsp)
+{
+
+//    MacFrameFormat mac_frame = Mcsp->frame;
+
 }
 
 
@@ -93,16 +112,17 @@ static int receiveData(struct MacService *Service)
 
     if(ret != FAIL)
     {
+
         printf("MCSP Receive Request is SUCCESSFUL\n");
         indication_message = commander->indication_message;
+
+        convertRawtoMacFrame((MCSPData *)commander->indication_message->payload);
+
     }
     else
     {
         printf("MCSP Receive Request is FAILED\n");
-
     }
-
-
 }
 
 

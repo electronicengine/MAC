@@ -114,21 +114,9 @@ static int executeCommands(struct CommanderPhy *Commander)
                 }
                 else
                 {
-                    if(ret == MANAGEMENT_COMMAND_RETURN)
-                    {
-                        printf("MANAGEMENT_COMMAND_RETURN\n");
-                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fms);
-                    }
-                    else if(ret == DATA_COMMAND_RETURN)
-                    {
-                        printf("DATA_COMMAND_RETURN\n");
-                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
-                    }
-                    else if(ret == DATA_RECEIVE_RETURN)
-                    {
-                        printf("DATA_RECEIVE_RETURN\n");
-                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
-                    }
+
+
+                    message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
 
                     ret = checkMessage(Commander, message);
 

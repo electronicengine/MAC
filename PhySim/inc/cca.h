@@ -15,7 +15,7 @@
 struct CCAOperations
 {
 
-    void (*spiDataUpdate)(struct UnixSocket *Socket, ServiceMessage *Message);
+    void (*spiDataUpdate)(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message);
 
 };
 

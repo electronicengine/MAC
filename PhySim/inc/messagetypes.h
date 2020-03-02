@@ -11,6 +11,8 @@
 #define PAYLOAD_LINK_QUALITY_SIZE       1
 #define PAYLOAD_REASON_SIZE             1
 #define SERVICE_MESSAGE_STATUS_SIZE     1
+#define MCSPDATA_SIZE_OFFSET            21
+#define PHYDATA_SIZE_OFFSET             2
 
 
 #define MAX_COMMAND_SIZE    32
@@ -22,6 +24,9 @@
 #define DATA_RECEIVE_RETURN         3
 #define DATA_COMMAND_RETURN         2
 #define MANAGEMENT_COMMAND_RETURN   1
+
+
+
 
 
 

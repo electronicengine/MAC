@@ -66,8 +66,8 @@ static int subjectOpsNotifyObservers(struct Subject *Subject, struct UnixSocket 
     {
         if (Subject->observers[i])
         {
-            Subject->observers[i]->operation.update(Socket, Message);
-		}
+            Subject->observers[i]->operation.update(Subject->observers[i], Socket, Message);
+        }
 	}
 
 	return 0;

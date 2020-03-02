@@ -11,7 +11,8 @@
 #define PAYLOAD_LINK_QUALITY_SIZE       1
 #define PAYLOAD_REASON_SIZE             1
 #define SERVICE_MESSAGE_STATUS_SIZE     1
-
+#define MCSPDATA_SIZE_OFFSET            21
+#define PHYDATA_SIZE_OFFSET             2
 
 
 typedef struct

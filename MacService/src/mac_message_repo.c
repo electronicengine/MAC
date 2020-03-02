@@ -1,6 +1,5 @@
 #include "mac_message_repo.h"
 
-
 static ServiceMessage *getServiceMessage(struct MacMessageRepo *);
 
 static MCSPData *getMcspData(struct MacMessageRepo *);
@@ -48,7 +47,7 @@ static ServiceMessage *setServiceMessage(struct MacMessageRepo *Repo, ServiceMes
 
     switch(PhyMessage->header.sub_type)
     {
-        case transmit:
+        case receive:
 
             mac_message->header.type = mac_data;
             mac_message->header.sub_type = transmit;
@@ -65,11 +64,16 @@ static ServiceMessage *setServiceMessage(struct MacMessageRepo *Repo, ServiceMes
             mcsp_data->frame_handle = raw_data[data_index++];
 
             mcsp_data->frame = &raw_data[data_index];
-            data_index += mac_message->header.length;
+            data_index += mac_message->header.length + MAC_FRAME_SIZE_OFFSET;
 
             mcsp_data->protect_enable = raw_data[data_index++];
 
             memcpy(mcsp_data->timestamp, &raw_data[data_index], sizeof(mcsp_data->timestamp));
+
+            mac_message->payload = (uint8_t *)mcsp_data;
+
+            mac_message->status_or_priorty = PhyMessage->status_or_priorty;
+
 
             break;
         default:

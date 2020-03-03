@@ -14,13 +14,19 @@
 #include "management_frames.h"
 #include "mac_message_repo.h"
 
+
+
+#define SERVER_OWPAN_ADDR   0x121212121212
+#define CLIENT_OWPAN_ADDR   0x212121212121
+
 struct MacService;
 
 
 struct MacServiceOperations
 {
-    int (*connectNetwork)(struct MacService *Service);
-    int (*createNetwork)(struct MacService *Service);
+
+    int (*connectNetwork)(struct MacService *Service, uint64_t OwpanAddr);
+    int (*createNetwork)(struct MacService *Service, uint64_t OwpanAddr);
     int (*sendData)(struct MacService *Service, uint8_t *Data, uint16_t Length);
     int (*receiveData)(struct MacService *Service);
 
@@ -38,11 +44,12 @@ struct MacService
     struct MacMessageRepo   mac_message_repo;
 
 
+
 };
 
 
 
-void initMacService(struct MacService *Service);
+void initMacService(struct MacService *Service, int Selection);
 void deinitMacService(struct MacService *Service);
 
 

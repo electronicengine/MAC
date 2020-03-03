@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include "subject.h"
-#include "unixsocket.h"
+#include "macsocket.h"
 
 
 static int subjectOpsRegisterObserver(struct Subject *Subject, struct Observer *Observer)

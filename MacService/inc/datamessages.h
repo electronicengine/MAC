@@ -37,7 +37,7 @@ typedef struct
     uint8_t         frame_handle;
     uint8_t         *frame;
     uint8_t         protect_enable;
-    uint8_t        timestamp[6];
+    uint8_t         timestamp[6];
 
 }MCSPData;
 

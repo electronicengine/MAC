@@ -7,6 +7,7 @@
 #include <time.h>
 #include "macframe.h"
 #include "datamessages.h"
+#include "macsocket.h"
 
 
 #define container_of(ptr, type, member) \

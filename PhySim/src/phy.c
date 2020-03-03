@@ -7,7 +7,7 @@ void initPhy(struct PhyService *Phy)
 
     struct Subject *subject = &Phy->unix_socket.subject;
 
-    initSocket(&Phy->unix_socket);
+    initMacSocket(&Phy->unix_socket);
 
     initCCA(&Phy->cca);
     initDataTransmitter(&Phy->transmitter);

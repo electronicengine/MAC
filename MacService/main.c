@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "mac_service.h"
 #include "datamessages.h"
 #include "mac_frames.h"
+
 
 
 int main()
@@ -10,21 +12,18 @@ int main()
     struct MacService mac;
 
     MacFrameFormat mac_frame;
+    int selection;
+
 
     char *data = "hello world";
 
-//    mac_frame.header.receiver_address = 0x121212121212;
-//    mac_frame.header.transmitter_address = 0x212121212121;
 
-    mac_frame.header.payload_length = 11;
-    mac_frame.payload = (uint8_t *)data;
-    mac_frame.fcs = 0x20;
+    printf("select 1 for server, 2 for client <<\n");
+    scanf("%d", &selection);
 
-    initMacService(&mac);
+    initMacService(&mac, selection);
 
-    mac.ops.sendData(&mac, (uint8_t *)&mac_frame, 11);
-
-    printf("\n\n\n, receiving...\n\n\n");
+    mac.ops.sendData(&mac, (uint8_t *)data, 11);
 
     mac.ops.receiveData(&mac);
 

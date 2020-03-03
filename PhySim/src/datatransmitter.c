@@ -36,7 +36,6 @@ static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPay
 
     index += SEQUENCECONTROL_SIZE;
 
-    printf("ındex :%d\n", (index));
     mac_frame_header.payload_length = McspPayload[index++];
     mac_frame_header.payload_length |= (McspPayload[index++] << 8) & 0xff;
 
@@ -385,12 +384,6 @@ static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struc
 
     transmit_data = createIndicationMessage(phy_repo, mac_repo, &data_index);
 
-    printf("indication data %d: ", data_index);
-
-    for(int i = 0; i<data_index; i++)
-        printf("%d-", transmit_data[i]);
-
-    printf("\n");
 
     Socket->operations.setData(Socket, transmit_data, data_index);
 

@@ -66,7 +66,21 @@ typedef struct
 {
 
     MassageReason       reason;
-    uint16_t            delay;
+    uint8_t             owpan_addr[6];
+    uint32_t            start_time;
+    uint32_t            beacon_order;
+    uint8_t             superframe_order;
+    uint8_t             owpan_coordinator;
+    uint8_t             coord_realighment;
+    uint8_t             coord_realignment_security_level;
+    uint8_t             coord_realignment_keyid_mode;
+    uint64_t            coord_realignment_keysource;
+    uint8_t             coord_realignment_keyindex;
+    uint8_t             beacon_security_level;
+    uint8_t             beacon_key_id_mode;
+    uint64_t            beacon_key_source;
+    uint8_t             beacon_key_index;
+
 
 }MLMEStart;
 

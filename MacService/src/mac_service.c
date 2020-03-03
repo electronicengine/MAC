@@ -2,23 +2,29 @@
 
 
 
-static int connectNetwork(struct MacService *Service);
-static int createNetwork(struct MacService *Service);
+static int connectNetwork(struct MacService *Service, uint64_t OwpanAddr);
+static int createNetwork(struct MacService *Service, uint64_t OwpanAddr);
 static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length);
 static int receiveData(struct MacService *Service);
 
 
 
-static int connectNetwork(struct MacService *Service)
+static int connectNetwork(struct MacService *Service, uint64_t OwpnaAddr)
 {
 
 }
 
 
 
-static int createNetwork(struct MacService *Service)
+static int createNetwork(struct MacService *Service, uint64_t OwpanAddr)
 {
+    ServiceMessage *message = Service->mac_message_repo.getServiceMessage(&Service->mac_message_repo);
+    MLMEStart *mlme_start = Service->mac_message_repo.getMlmeStart(&Service->mac_message_repo);
 
+//    for(int i=0; i<6; i++)
+//        printf("%02X-", OwpanAddr[i]);
+
+    printf("\n");
 }
 
 
@@ -27,9 +33,14 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
 {
 
     int ret;
-    ServiceMessage *indication_message;
     ServiceMessage *message = Service->mac_message_repo.getServiceMessage(&Service->mac_message_repo);
     MCSPData *mcsp_data = Service->mac_message_repo.getMcspData(&Service->mac_message_repo);
+
+    MacFrameFormat mac_frame;
+
+    mac_frame.header.payload_length = 11;
+    mac_frame.payload = (uint8_t *)Data;
+    mac_frame.fcs = 0x20;
 
     struct CommanderMac *commander = &Service->commander_mac;
     struct MacDataSap *sap = &Service->mac_data_sap;
@@ -54,7 +65,7 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
     printf("\n");
 
     mcsp_data->frame_handle = 12;
-    mcsp_data->frame = Data;
+    mcsp_data->frame = (uint8_t *)&mac_frame;
     mcsp_data->protect_enable = 3;
 
     memcpy(mcsp_data->timestamp, (uint8_t *)&timestamp, sizeof(mcsp_data->timestamp));
@@ -143,6 +154,8 @@ static int receiveData(struct MacService *Service)
     struct CommanderMac *commander = &Service->commander_mac;
     struct MacDataSap *sap = &Service->mac_data_sap;
 
+    printf("\n\n\n, receiving...\n\n\n");
+
     message->header.type = mac_data;
     message->header.sub_type = receive;
     message->header.length = 1;
@@ -179,7 +192,7 @@ static int receiveData(struct MacService *Service)
 
 
 
-void initMacService(struct MacService *Service)
+void initMacService(struct MacService *Service, int Selection)
 {
 
     Service->ops.connectNetwork = connectNetwork;
@@ -191,6 +204,11 @@ void initMacService(struct MacService *Service)
     initMacDataSap(&Service->mac_data_sap);
     initMacManagementSap(&Service->mac_management_sap);
     initMacMessageRepo(&Service->mac_message_repo);
+
+    if(Selection == 1)
+        createNetwork(Service, SERVER_OWPAN_ADDR);
+    else if(Selection == 2)
+        connectNetwork(Service, CLIENT_OWPAN_ADDR);
 
 }
 

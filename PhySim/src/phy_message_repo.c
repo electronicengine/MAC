@@ -212,12 +212,6 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
             printf("set receive message\n");
 
-            printf("raw: ");
-            for(int i = 0; i<67; i++)
-                printf("%02X-", RawData[i]);
-
-            printf("\n");
-
             pd_data->reason = RawData[index++];
 
             pd_data->payload = &RawData[index];

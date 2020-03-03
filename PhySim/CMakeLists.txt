@@ -14,8 +14,9 @@ add_executable(${PROJECT_NAME} "main.c"
                                 "src/datatransmitter.c"
                                 "src/trxstate.c"
                                 "src/cca.c"
-                                "src/unixsocket.c"
+                                "src/macsocket.c"
                                 "src/observer.c"
                                 "src/subject.c"
                                 "src/mac_message_repo.c"
-                                "src/phy_message_repo.c")
+                                "src/phy_message_repo.c"
+                                "src/phy_pib_attribute.c")

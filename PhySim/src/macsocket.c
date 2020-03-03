@@ -1,4 +1,4 @@
-#include "unixsocket.h"
+#include "macsocket.h"
 
 
 //private variables
@@ -7,7 +7,7 @@ static volatile short int stop_thread = 1;
 
 
 
-int initSocket(struct UnixSocket *Socket)
+int initMacSocket(struct UnixSocket *Socket)
 {
     initSubject(&Socket->subject);
 
@@ -23,6 +23,17 @@ int initSocket(struct UnixSocket *Socket)
 
 }
 
+
+int initWirelessSocket(struct UnixSocket *Socket, uint8_t *OwpanIp)
+{
+    initMacMessageRepo(&Socket->mac_repo);
+    initPhyMessageRepo(&Socket->phy_repo);
+
+    Socket->operations.closePort = closePort;
+    Socket->operations.getData = getData;
+    Socket->operations.setData = setData;
+
+}
 
 
 static void createSocketThread(struct UnixSocket *Socket)

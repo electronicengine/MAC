@@ -18,62 +18,98 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
         case cca:
 
             if(((PLMECCA *)Message->payload)->reason == confirm)
+            {
+                printf( "received confirm PLMECCA\n");
                 return SUCCESS;
-
+            }
             else
+            {
+                printf( "received confirm PLMESet Failed\n");
                 return FAIL;
+            }
 
         case set_trx:
 
             if(((PLMESetTRX *)Message->payload)->reason == confirm)
+            {
+                printf( "received confirm PLMESetTrx\n");
                 return SUCCESS;
-
+            }
             else
+            {
+                printf( "received confirm PLMESet Failed\n");
                 return FAIL;
+            }
 
         case transmit:
 
 
             if(((PhyData *)Message->payload)->reason == confirm)
+            {
+                printf( "received confirm PhyData Transmit\n");
+
                 return SUCCESS;
+            }
             else
+            {
+                printf( "received confirm PLMESet Failed\n");
                 return FAIL;
+            }
 
         case receive:
 
             if(((PhyData *)Message->payload)->reason == indication)
             {
+                printf( "received confirm PhyData Received Indication\n");
                 Commander->phy_indication_data = Message;
                 return SUCCESS;
             }
             else
+            {
+                printf( "received confirm PLMESet Failed\n");
                 return FAIL;
+            }
 
         case get:
 
             if(((PLMEGet *)Message->payload)->reason == confirm)
+            {
+                printf( "received confirm PLMEGet\n");
                 return SUCCESS;
-
+            }
             else
+            {
+                printf( "received confirm PLMESet Failed\n");
                 return FAIL;
+            }
 
             break;
 
         case set:
 
             if(((PLMESet *)Message->payload)->reason == confirm)
+            {
+                printf( "received confirm PLMESet\n");
                 return SUCCESS;
-
+            }
             else
+            {
+                printf( "received confirm PLMESet Failed\n");
                 return FAIL;
+            }
 
         case switch_state:
 
             if(((PLMESwitch *)Message->payload)->reason == confirm)
+            {
+                printf( "received confirm PLMESwitch\n");
                 return SUCCESS;
-
+            }
             else
+            {
+                printf( "received confirm PLMESwitch Failed\n");
                 return FAIL;
+            }
 
             break;
 
@@ -87,7 +123,7 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
 static int executeCommands(struct CommanderPhy *Commander)
 {
 
-    int try = 0;
+    int try_num = 0;
     int ret;
     struct PhyMessageRepo *repo = &Commander->rx_repo;
     ServiceMessage *message;
@@ -98,17 +134,18 @@ static int executeCommands(struct CommanderPhy *Commander)
         for(int i=0; i < Commander->command_index; i++)
         {
 
-            printf("commander phy execute command %d\n", i);
 
             int (*execute_ops)(struct PhyCommand *Command, ServiceMessage *Message) =
                     Commander->commands[i]->ops.execute;
 
             do
             {
-                try++;
+                printf("commander phy execute command %d\n", i);
+
+                try_num++;
                 ret = execute_ops(Commander->commands[i], Commander->messages[i]);
 
-                if(ret == -1)
+                if(ret == FAIL)
                 {
                     return ret;
                 }
@@ -116,21 +153,44 @@ static int executeCommands(struct CommanderPhy *Commander)
                 {
 
 
-                    message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
+                    if(ret == MANAGEMENT_COMMAND_RETURN)
+                    {
+                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fms);
+                        printf("raw: ");
+                        for(int k = 0; k < 8; k++)
+                            printf("%02X-", Commander->commands[i]->raw_data_fms[k]);
+                        printf("\n");
+                    }
+                    if(ret == DATA_COMMAND_RETURN || ret == DATA_RECEIVE_RETURN)
+                    {
+                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
+                        printf("raw: ");
+                        for(int k = 0; k < 8; k++)
+                            printf("%02X-", Commander->commands[i]->raw_data_fds[k]);
+                        printf("\n");
+                    }
 
                     ret = checkMessage(Commander, message);
 
-                    if(ret =! FAIL)
+                    if(ret == FAIL)
+                    {
+                        printf("reattempting...\n");
                         continue;
+                    }
                     else
+                    {
                         break;
+                    }
 
                 }
 
-            }while(try > TRYOUT);
+            }while(try_num < TRYOUT);
 
             if(ret == FAIL)
+            {
+                printf("failed!\n");
                 break;
+            }
 
         }
     }

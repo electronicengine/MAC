@@ -139,7 +139,6 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
     message->header.length = RawData[index++];
     message->header.length |= RawData[index++] << 8;
 
-    printf("set service message sub type %d\n", message->header.sub_type);
 
     switch(message->header.sub_type)
     {

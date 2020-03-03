@@ -142,8 +142,6 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
     message->header.length = RawData[index++];
     message->header.length |= RawData[index++] << 8;
 
-    printf("set service message sub type %d\n", message->header.sub_type);
-
     switch(message->header.sub_type)
     {
         case cca:
@@ -212,6 +210,14 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
             pd_data = Repo->getPhyData(Repo);
 
+            printf("set receive message\n");
+
+            printf("raw: ");
+            for(int i = 0; i<67; i++)
+                printf("%02X-", RawData[i]);
+
+            printf("\n");
+
             pd_data->reason = RawData[index++];
 
             pd_data->payload = &RawData[index];
@@ -225,7 +231,6 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case receive:
 
-            printf("set receive message\n");
 
             pd_data = Repo->getPhyData(Repo);
 

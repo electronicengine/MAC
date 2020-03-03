@@ -42,6 +42,12 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *PhyMessage
 
     transmit_data = convertMessagetoRaw(repo, PhyMessage, &data_index);
 
+    printf("answer raw: ");
+    for(int i = 0; i < 7; i++)
+        printf("%02X-", transmit_data[i]);
+
+    printf("\n");
+
     Socket->operations.setData(Socket, transmit_data, data_index);
 }
 

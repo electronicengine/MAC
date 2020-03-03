@@ -13,6 +13,7 @@ static int execute(struct PhyCommand *Command, ServiceMessage *Message);
 
 
 
+
 static int execute(struct PhyCommand *Command, ServiceMessage *Message)
 {
 
@@ -159,11 +160,6 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
 
     Sap->command.raw_data_fds[data_index++] = PhyMessage->status_or_priorty;
 
-    printf("data transmit raw %d: \n", data_index);
-    for(int i = 0; i < data_index; i++)
-        printf("%02X-", Sap->command.raw_data_fds[i]);
-
-    printf("\n");
 
 
 

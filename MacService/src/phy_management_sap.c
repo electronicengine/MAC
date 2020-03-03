@@ -108,11 +108,13 @@ static int setTrx(struct PhyManagementSap *Sap, ServiceMessage *Message)
     ret = sock->ops.transmitData(sock, Sap->command.raw_data_fms, data_index);
 
     if(ret != FAIL)
-        sock->ops.receiveData(sock, Sap->command.raw_data_fms, data_index);
-            if(ret != FAIL)
-                return SUCCESS;
-            else
-                return FAIL;
+    {
+        ret = sock->ops.receiveData(sock, Sap->command.raw_data_fms, data_index);
+        if(ret != FAIL)
+            return SUCCESS;
+        else
+            return FAIL;
+    }
 
     return SUCCESS;
 

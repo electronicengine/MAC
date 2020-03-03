@@ -46,11 +46,11 @@ static int convertFrametoRaw(struct PhyDataSap *Sap, uint8_t *MacFrame, int *Dat
     POLLAck *pollack = &header->ack_information;
     SequenceControl *sequence_control = &header->sequence_control;
 
-    memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)(&control), sizeof(*control));
-    *DataIndex += sizeof(*control);
+    memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)(&control), FRAMECONTROL_SIZE);
+    (*DataIndex) += FRAMECONTROL_SIZE;
 
-    memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)(&pollack), sizeof(*pollack));
-    *DataIndex += sizeof(*pollack);
+    memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)(&pollack), POLLACK_SIZE);
+    (*DataIndex) += POLLACK_SIZE;
 
     Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[0];
     Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[1];
@@ -73,8 +73,8 @@ static int convertFrametoRaw(struct PhyDataSap *Sap, uint8_t *MacFrame, int *Dat
     Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[4];
     Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_address[5];
 
-    memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)sequence_control, sizeof(*sequence_control));
-    *DataIndex += sizeof(*sequence_control);
+    memcpy(&Sap->command.raw_data_fds[*DataIndex], (uint8_t *)sequence_control, SEQUENCECONTROL_SIZE);
+    *DataIndex += SEQUENCECONTROL_SIZE;
 
 //    Sap->command.raw_data_fds[(*DataIndex)++] = header->auxiliary_security_header;
     Sap->command.raw_data_fds[(*DataIndex)++] = (header->payload_length) & 0xff;
@@ -85,6 +85,9 @@ static int convertFrametoRaw(struct PhyDataSap *Sap, uint8_t *MacFrame, int *Dat
 
     Sap->command.raw_data_fds[(*DataIndex)++] = (mac_frame->fcs) & 0xff;
     Sap->command.raw_data_fds[(*DataIndex)++] = ((mac_frame->fcs) >> 8) & 0xff;
+    Sap->command.raw_data_fds[(*DataIndex)++] = ((mac_frame->fcs) >> 16) & 0xff;
+    Sap->command.raw_data_fds[(*DataIndex)++] = ((mac_frame->fcs) >> 24) & 0xff;
+
 
 }
 
@@ -124,6 +127,7 @@ static int convertMcspMessagetoRaw(struct PhyDataSap *Sap, uint8_t *Payload, int
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->timestamp[4];
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->timestamp[5];
 
+
 }
 
 
@@ -139,6 +143,7 @@ static int convertPhyMessagetoRaw(struct PhyDataSap *Sap, uint8_t *PhyMessage, i
 
     Sap->command.raw_data_fds[(*DataIndex)++] = pd->link_quality;
 
+
 }
 
 
@@ -151,6 +156,8 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
     int data_index = 0;
     int ret;
 
+    printf("dataTransmitRequest\n");
+
     Sap->command.raw_data_fds[data_index++] = PhyMessage->header.type;
     Sap->command.raw_data_fds[data_index++] = PhyMessage->header.sub_type;
     Sap->command.raw_data_fds[data_index++] = PhyMessage->header.length & 0xff;
@@ -160,7 +167,7 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
 
     Sap->command.raw_data_fds[data_index++] = PhyMessage->status_or_priorty;
 
-
+    printf("Data Size: %d\n", data_index);
 
 
     ret = sock->ops.transmitData(sock, Sap->command.raw_data_fds, data_index);
@@ -174,10 +181,12 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
 static int dataReceiveRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessage)
 {
     struct Socket *sock = &Sap->command.sock;
-    PhyData *pd = (PhyData *)PhyMessage;
+    PhyData *pd = (PhyData *)PhyMessage->payload;
 
     int data_index = 0;
     int ret;
+
+    printf("dataReciveRequest\n");
 
     Sap->command.raw_data_fds[data_index++] = PhyMessage->header.type;
     Sap->command.raw_data_fds[data_index++] = PhyMessage->header.sub_type;

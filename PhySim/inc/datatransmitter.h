@@ -25,12 +25,14 @@ struct DataTransmitterOperations
 struct DataTransmitter
 {
 
-        struct DataTransmitterOperations operations;
-        struct Observer observer;
 
-        MCSPData mcsp_data;
-        MacFrameFormat mac_frame;
-        PhyData phy_data;
+    struct DataTransmitterOperations operations;
+    struct Observer observer;
+    struct UnixSocket wireles_socket;
+
+    MCSPData mcsp_data;
+    MacFrameFormat mac_frame;
+    PhyData phy_data;
 
 };
 

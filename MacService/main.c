@@ -23,7 +23,10 @@ int main()
     initMacService(&mac);
 
     mac.ops.sendData(&mac, (uint8_t *)&mac_frame, 11);
-//    mac.ops.receiveData(&mac);
+
+    printf("\n\n\n, receiving...\n\n\n");
+
+    mac.ops.receiveData(&mac);
 
     return 0;
 

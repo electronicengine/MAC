@@ -1,4 +1,5 @@
 #include "mac_message_repo.h"
+#include <stdio.h>
 
 static ServiceMessage *getServiceMessage(struct MacMessageRepo *);
 
@@ -42,15 +43,17 @@ static ServiceMessage *setServiceMessage(struct MacMessageRepo *Repo, ServiceMes
 {
     ServiceMessage *mac_message = Repo->getServiceMessage(Repo);
     MCSPData *mcsp_data = Repo->getMcspData(Repo);
-    uint8_t *raw_data = (uint8_t *) PhyMessage->payload;
+    uint8_t *raw_data = (uint8_t *)((PhyData *)PhyMessage->payload)->payload;
+
     int data_index = 0;
 
     switch(PhyMessage->header.sub_type)
     {
         case receive:
 
+
             mac_message->header.type = mac_data;
-            mac_message->header.sub_type = transmit;
+            mac_message->header.sub_type = receive;
             mac_message->header.length  = PhyMessage->header.length;
 
             mcsp_data->reason = raw_data[data_index++];

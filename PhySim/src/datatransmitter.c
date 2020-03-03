@@ -1,5 +1,6 @@
 #include <datatransmitter.h>
 #include "phy.h"
+#include <memory.h>
 
 
 static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPayload, int *Index)
@@ -129,33 +130,78 @@ static int printDataTransmitRequest(struct DataTransmitter *Transmitter, Service
 static int createIndicationMacFrame(uint8_t *RawData, int *Index)
 {
     MacFrameFormat mac_frame;
-    MacFrameHeader mac_frame_header;
+    MacFrameHeader *mac_frame_header = &mac_frame.header;
+    FrameControl *control = &mac_frame_header->frame_control;
+    POLLAck *poll_ack = &mac_frame_header->ack_information;
+    SequenceControl *sequence_control = &mac_frame_header->sequence_control;
 
-    char *data = "hello world from physim";
+    int index = 0;
 
-    mac_frame.header.transmitter_address[0] = 0x12;
-    mac_frame.header.transmitter_address[1] = 0x12;
-    mac_frame.header.transmitter_address[2] = 0x12;
-    mac_frame.header.transmitter_address[3] = 0x12;
-    mac_frame.header.transmitter_address[4] = 0x12;
-    mac_frame.header.transmitter_address[5] = 0x12;
+    mac_frame_header->transmitter_address[0] = 0x21;
+    mac_frame_header->transmitter_address[1] = 0x21;
+    mac_frame_header->transmitter_address[2] = 0x21;
+    mac_frame_header->transmitter_address[3] = 0x21;
+    mac_frame_header->transmitter_address[4] = 0x21;
+    mac_frame_header->transmitter_address[5] = 0x21;
 
-    mac_frame.header.receiver_address[0] = 0x21;
-    mac_frame.header.receiver_address[0] = 0x21;
-    mac_frame.header.receiver_address[0] = 0x21;
-    mac_frame.header.receiver_address[0] = 0x21;
-    mac_frame.header.receiver_address[0] = 0x21;
-    mac_frame.header.receiver_address[0] = 0x21;
+    mac_frame_header->receiver_address[0] = 0x12;
+    mac_frame_header->receiver_address[1] = 0x12;
+    mac_frame_header->receiver_address[2] = 0x12;
+    mac_frame_header->receiver_address[3] = 0x12;
+    mac_frame_header->receiver_address[4] = 0x12;
+    mac_frame_header->receiver_address[5] = 0x12;
 
-    mac_frame.header.payload_length = 23;
-    mac_frame.payload = (uint8_t *)data;
+    mac_frame_header->payload_length = 23;
+    mac_frame.payload = "hello world from physim";
     mac_frame.fcs = 0x20;
 
+    /***********************************************************************/
 
-    memcpy(RawData[index], &mac_frame_header.frame_control, FRAMECONTROL_SIZE);
+    memcpy(&RawData[index], (uint8_t *)control, FRAMECONTROL_SIZE);
     index += FRAMECONTROL_SIZE;
 
-    return mac_frame;
+    memcpy(&RawData[index], (uint8_t *)poll_ack, POLLACK_SIZE);
+    index += POLLACK_SIZE;
+
+    RawData[index++] = mac_frame.header.receiver_address[0];
+    RawData[index++] = mac_frame.header.receiver_address[1];
+    RawData[index++] = mac_frame.header.receiver_address[2];
+    RawData[index++] = mac_frame.header.receiver_address[3];
+    RawData[index++] = mac_frame.header.receiver_address[4];
+    RawData[index++] = mac_frame.header.receiver_address[5];
+
+    RawData[index++] = mac_frame.header.transmitter_address[0];
+    RawData[index++] = mac_frame.header.transmitter_address[1];
+    RawData[index++] = mac_frame.header.transmitter_address[2];
+    RawData[index++] = mac_frame.header.transmitter_address[3];
+    RawData[index++] = mac_frame.header.transmitter_address[4];
+    RawData[index++] = mac_frame.header.transmitter_address[5];
+
+    RawData[index++] = mac_frame.header.auxiliary_address[0];
+    RawData[index++] = mac_frame.header.auxiliary_address[1];
+    RawData[index++] = mac_frame.header.auxiliary_address[2];
+    RawData[index++] = mac_frame.header.auxiliary_address[3];
+    RawData[index++] = mac_frame.header.auxiliary_address[4];
+    RawData[index++] = mac_frame.header.auxiliary_address[5];
+
+    memcpy(&RawData[index], (uint8_t *)sequence_control, SEQUENCECONTROL_SIZE);
+    index += SEQUENCECONTROL_SIZE;
+
+    RawData[index++] = mac_frame_header->payload_length & 0xff;
+    RawData[index++] = (mac_frame_header->payload_length << 8)& 0xff;
+
+    printf("payload len: %d\n", mac_frame_header->payload_length);
+    memcpy(&RawData[index], mac_frame.payload, mac_frame_header->payload_length);
+    index += mac_frame_header->payload_length;
+
+    RawData[index++] = mac_frame.fcs & 0xff;
+    RawData[index++] = (mac_frame.fcs << 8) & 0xff;
+    RawData[index++] = (mac_frame.fcs << 16) & 0xff;
+    RawData[index++] = (mac_frame.fcs << 24) & 0xff;
+
+    (*Index) += index;
+
+    return 0;
 }
 
 
@@ -166,6 +212,7 @@ static int createIndicationMcspData(uint8_t *RawData, struct MacMessageRepo *Mac
     int index = 0;
 
     mcsp_data->reason = indication;
+
     mcsp_data->destination_address[0] = 0x12;
     mcsp_data->destination_address[1] = 0x12;
     mcsp_data->destination_address[2] = 0x12;
@@ -173,16 +220,21 @@ static int createIndicationMcspData(uint8_t *RawData, struct MacMessageRepo *Mac
     mcsp_data->destination_address[4] = 0x12;
     mcsp_data->destination_address[5] = 0x12;
 
-    mcsp_data->source_address[0] = 0x12;
-    mcsp_data->source_address[1] = 0x12;
-    mcsp_data->source_address[2] = 0x12;
-    mcsp_data->source_address[3] = 0x12;
-    mcsp_data->source_address[4] = 0x12;
-    mcsp_data->source_address[5] = 0x12;
+    mcsp_data->source_address[0] = 0x21;
+    mcsp_data->source_address[1] = 0x21;
+    mcsp_data->source_address[2] = 0x21;
+    mcsp_data->source_address[3] = 0x21;
+    mcsp_data->source_address[4] = 0x21;
+    mcsp_data->source_address[5] = 0x21;
 
     mcsp_data->frame_handle = 12;
+    mcsp_data->protect_enable = 1;
+    mcsp_data->timestamp[0] = 56;
+
+    /************************************************************/
 
     RawData[index++] = mcsp_data->reason;
+
     RawData[index++] = mcsp_data->destination_address[0];
     RawData[index++] = mcsp_data->destination_address[1];
     RawData[index++] = mcsp_data->destination_address[2];
@@ -212,12 +264,13 @@ static int createIndicationMcspData(uint8_t *RawData, struct MacMessageRepo *Mac
 
     (*Index) += index;
 
+    return 0;
+
 }
 
 
 
-
-static uint8_t *createIndicationPhyData(uint8_t *RawData, struct PhyMessageRepo *PhyRepo, struct MacMessageRepo *MacRepo, int *Index)
+static int createIndicationPhyData(uint8_t *RawData, struct PhyMessageRepo *PhyRepo, struct MacMessageRepo *MacRepo, int *Index)
 {
     PhyData *pd = PhyRepo->getPhyData(PhyRepo);
     int index = 0;
@@ -231,6 +284,8 @@ static uint8_t *createIndicationPhyData(uint8_t *RawData, struct PhyMessageRepo 
 
     *Index += index;
 
+    return 0;
+
 }
 
 
@@ -240,19 +295,24 @@ static uint8_t *createIndicationMessage(struct PhyMessageRepo *PhyRepo, struct M
 
     uint8_t *raw_data = PhyRepo->getRawData(PhyRepo);
     ServiceMessage *message = PhyRepo->getServiceMessage(PhyRepo);
+    int index = 0;
 
     message->header.type = phy_data;
     message->header.sub_type = receive;
-    message->header.length = 11;
+    message->header.length = 23;
 
-    raw_data[(*Index)++] = message->header.type;
-    raw_data[(*Index)++] = message->header.sub_type;
-    raw_data[(*Index)++] = message->header.length & 0xff;
-    raw_data[(*Index)++] = (message->header.length >> 8) & 0xff;
+    message->status_or_priorty = 22;
 
-//    createIndicationPhyData(&raw_data)
+    raw_data[index++] = message->header.type;
+    raw_data[index++] = message->header.sub_type;
+    raw_data[index++] = message->header.length & 0xff;
+    raw_data[index++] = (message->header.length >> 8) & 0xff;
 
-    raw_data[(*Index)++] = message->status_or_priorty;
+    createIndicationPhyData(&raw_data[index], PhyRepo, MacRepo, &index);
+
+    raw_data[index++] = message->status_or_priorty;
+
+    (*Index) += index;
 
     return raw_data;
 
@@ -291,7 +351,6 @@ static void confirmDataTransmitRequest(struct DataTransmitter *Transmitter, stru
     ServiceMessage *confirm_message = PhyMessage;
     PhyData *confirm_pd = (PhyData *)PhyMessage->payload;
 
-
     printf("confirm dataTransmitterReqest\n");
 
     printDataTransmitRequest(Transmitter, PhyMessage);
@@ -307,8 +366,6 @@ static void confirmDataTransmitRequest(struct DataTransmitter *Transmitter, stru
     confirm_message->status_or_priorty = 0;
 
     transmit_data = convertConfirmMessagetoRaw(phy_repo, confirm_message, &data_index);
-
-
 
     Socket->operations.setData(Socket, transmit_data, data_index);
 
@@ -327,6 +384,13 @@ static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struc
     printf("confirm dataReceiveRequest\n");
 
     transmit_data = createIndicationMessage(phy_repo, mac_repo, &data_index);
+
+    printf("indication data %d: ", data_index);
+
+    for(int i = 0; i<data_index; i++)
+        printf("%d-", transmit_data[i]);
+
+    printf("\n");
 
     Socket->operations.setData(Socket, transmit_data, data_index);
 

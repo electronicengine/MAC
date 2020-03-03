@@ -80,10 +80,54 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
 
 
 
-static int convertRawtoMacFrame(MCSPData *Mcsp)
+static int convertRawtoMacFrame(uint8_t *RawData)
 {
+    MacFrameFormat mac_frame;
+    MacFrameHeader *header = &mac_frame.header;
+    FrameControl *control = &header->frame_control;
+    POLLAck *poll_ack = &header->ack_information;
+    SequenceControl *sequence_control = &header->sequence_control;
 
-//    MacFrameFormat mac_frame = Mcsp->frame;
+    int index = 0;
+
+
+    index = index + FRAMECONTROL_SIZE + POLLACK_SIZE;
+
+    header->receiver_address[0] = RawData[index++];
+    header->receiver_address[1] = RawData[index++];
+    header->receiver_address[2] = RawData[index++];
+    header->receiver_address[3] = RawData[index++];
+    header->receiver_address[4] = RawData[index++];
+    header->receiver_address[5] = RawData[index++];
+
+    header->transmitter_address[0] = RawData[index++];
+    header->transmitter_address[1] = RawData[index++];
+    header->transmitter_address[2] = RawData[index++];
+    header->transmitter_address[3] = RawData[index++];
+    header->transmitter_address[4] = RawData[index++];
+    header->transmitter_address[5] = RawData[index++];
+
+    header->auxiliary_address[0] = RawData[index++];
+    header->auxiliary_address[1] = RawData[index++];
+    header->auxiliary_address[2] = RawData[index++];
+    header->auxiliary_address[3] = RawData[index++];
+    header->auxiliary_address[4] = RawData[index++];
+    header->auxiliary_address[5] = RawData[index++];
+
+    index += SEQUENCECONTROL_SIZE;
+
+    header->payload_length = RawData[index++];
+    header->payload_length |= (RawData[index++] << 8) & 0xff;
+
+    mac_frame.payload= &RawData[index];
+
+    printf("mac frame payload %d: \n", header->payload_length);
+    for(int i = 0; i< header->payload_length; i++)
+        printf("%c", mac_frame.payload[i]);
+
+    printf("\n");
+
+    return 0;
 
 }
 
@@ -116,7 +160,15 @@ static int receiveData(struct MacService *Service)
         printf("MCSP Receive Request is SUCCESSFUL\n");
         indication_message = commander->indication_message;
 
-        convertRawtoMacFrame((MCSPData *)commander->indication_message->payload);
+        MCSPData *mcsp_data = (MCSPData *)indication_message->payload;
+
+        printf("Mcsp Source Addr: ");
+
+        for(int i=0; i<6; i++)
+            printf("%02X-", mcsp_data->source_address[i]);
+        printf("\n");
+
+        convertRawtoMacFrame(mcsp_data->frame);
 
     }
     else

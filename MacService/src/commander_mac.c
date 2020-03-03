@@ -32,6 +32,7 @@ static int executeCommands(struct CommanderMac *Commander)
                 {
                     if(ret == DATA_RECEIVE_RETURN)
                     {
+                        ServiceMessage message;
                         printf("MAC DATA_RECEIVE_RETURN\n");
 
                         mac_message = Commander->rx_repo.setServiceMessage(&Commander->rx_repo,
@@ -40,7 +41,7 @@ static int executeCommands(struct CommanderMac *Commander)
                         Commander->indication_message = mac_message;
 
                     }
-                    if(ret == DATA_COMMAND_RETURN)
+                    else if(ret == DATA_COMMAND_RETURN)
                     {
                         printf("MAC DATA_COMMAND_RETURN\n");
                         // to do something
@@ -101,6 +102,8 @@ void initCommanderMac(struct CommanderMac *Commander)
     Commander->ops.appendCommand = appendCommand;
     Commander->ops.executeCommands = executeCommands;
     Commander->ops.clearCommands = clearCommands;
+
+    initMacMessageRepo(&Commander->rx_repo);
 
 }
 

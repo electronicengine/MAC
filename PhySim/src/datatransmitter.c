@@ -5,11 +5,11 @@
 
 static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPayload, int *Index)
 {
+
     MacFrameHeader mac_frame_header;
     MacFrameFormat *mac_frame = &Transmitter->mac_frame;
 
     int index = 0;
-
 
     index = index + FRAMECONTROL_SIZE + POLLACK_SIZE;
 
@@ -39,7 +39,6 @@ static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPay
     mac_frame_header.payload_length = McspPayload[index++];
     mac_frame_header.payload_length |= (McspPayload[index++] << 8) & 0xff;
 
-
     mac_frame->payload = &McspPayload[index];
 
     printf("mac frame payload %d: \n", mac_frame_header.payload_length);
@@ -51,8 +50,6 @@ static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPay
 
     *Index = index;
 //    mac_frame->header.auxiliary_address[0] =  McspPayload
-
-
 
 }
 
@@ -85,7 +82,6 @@ static int extractMCSPData(struct DataTransmitter *Transmitter, uint8_t *PhyPayl
     mcsp_data->source_address[4] = PhyPayload[(*Index)++];
     mcsp_data->source_address[5] = PhyPayload[(*Index)++];
 
-
     mcsp_data->frame_handle = PhyPayload[(*Index)++];
 
     mcsp_data->frame = &PhyPayload[(*Index)++];
@@ -113,12 +109,9 @@ static int printDataTransmitRequest(struct DataTransmitter *Transmitter, Service
 
     pd = (PhyData *)PhyMessage->payload;
 
-
     extractMCSPData(Transmitter, pd->payload, &index);
 
-
     pd->link_quality = PhyMessage->payload[index++];
-
 
     return 0;
 
@@ -128,6 +121,7 @@ static int printDataTransmitRequest(struct DataTransmitter *Transmitter, Service
 
 static int createIndicationMacFrame(uint8_t *RawData, int *Index)
 {
+
     MacFrameFormat mac_frame;
     MacFrameHeader *mac_frame_header = &mac_frame.header;
     FrameControl *control = &mac_frame_header->frame_control;
@@ -201,7 +195,9 @@ static int createIndicationMacFrame(uint8_t *RawData, int *Index)
     (*Index) += index;
 
     return 0;
+
 }
+
 
 
 static int createIndicationMcspData(uint8_t *RawData, struct MacMessageRepo *MacRepo, int *Index)
@@ -384,7 +380,6 @@ static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struc
 
     transmit_data = createIndicationMessage(phy_repo, mac_repo, &data_index);
 
-
     Socket->operations.setData(Socket, transmit_data, data_index);
 
 }
@@ -411,11 +406,9 @@ static void spiDataUpdate(struct Observer *Obs, struct UnixSocket *Socket, Servi
 
             case confirm:
 
-
                 break;
 
             case indication:
-
 
                 break;
 

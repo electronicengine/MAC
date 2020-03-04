@@ -77,9 +77,11 @@ static int subjectOpsNotifyObservers(struct Subject *Subject, struct UnixSocket 
 
 static struct SubjectOperations SubjectOperation =
 {
+
     .registerObserver = subjectOpsRegisterObserver,
     .removeObserver = subjectOpsRemoveObserver,
     .notifyObservers = subjectOpsNotifyObservers,
+
 };
 
 

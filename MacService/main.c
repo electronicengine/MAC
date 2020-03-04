@@ -17,8 +17,10 @@ int main()
     char *data = "hello world";
 
 
-    printf("select 1 for server, 2 for client <<\n");
-    scanf("%d", &selection);
+//    printf("select 1 for server, 2 for client <<\n");
+//    scanf("%d", &selection);
+
+    selection = 1;
 
     initMacService(&mac, selection);
 

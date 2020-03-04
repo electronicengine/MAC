@@ -9,6 +9,7 @@ static volatile short int stop_thread = 1;
 
 int initMacSocket(struct UnixSocket *Socket)
 {
+
     initSubject(&Socket->subject);
 
     initMacMessageRepo(&Socket->mac_repo);
@@ -24,8 +25,10 @@ int initMacSocket(struct UnixSocket *Socket)
 }
 
 
+
 int initWirelessSocket(struct UnixSocket *Socket, uint8_t *OwpanIp)
 {
+
     initMacMessageRepo(&Socket->mac_repo);
     initPhyMessageRepo(&Socket->phy_repo);
 
@@ -34,6 +37,7 @@ int initWirelessSocket(struct UnixSocket *Socket, uint8_t *OwpanIp)
     Socket->operations.setData = setData;
 
 }
+
 
 
 static void createSocketThread(struct UnixSocket *Socket)
@@ -61,9 +65,9 @@ static void *listenSocket(void *Socket)
 
     stop_thread = 0;
 
-
     while(1)
     {
+
         if(stop_thread == 1)
             break;
 
@@ -119,10 +123,12 @@ static int setData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size
 
     if(rc == -1)
     {
+
         printf("SEND ERROR: \n");
         close(Socket->server_sock);
         close(Socket->client_sock);
         return rc;
+
     }
 
 }
@@ -183,7 +189,6 @@ static int openPort(struct UnixSocket *Socket)
         return rc;
     }
 
-
     /***************************************/
     /* Set up the UNIX sockaddr structure  */
     /* for the server socket and connect   */
@@ -199,7 +204,6 @@ static int openPort(struct UnixSocket *Socket)
         return -1;
     }
 
-
     //setting timeout
 
 //    struct timeval timeout;
@@ -212,7 +216,11 @@ static int openPort(struct UnixSocket *Socket)
 }
 
 
+
 int deinitSocket(struct UnixSocket *Socket)
 {
 
 }
+
+
+

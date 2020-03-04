@@ -8,13 +8,17 @@ struct MacManagementSap;
 
 struct MacManagementSapOperations
 {
+    int (*startOwpan)(struct MacManagementSap *Sap, ServiceMessage *Message);
+    int (*stopOwpan)(struct MacManagementSap *Sap, ServiceMessage *Message);
+
 };
 
 
 struct MacManagementSap
 {
-    struct MacCommandOperations ops;
-    struct MacCommand Command;
+    struct MacManagementSapOperations ops;
+    struct MacCommand command;
+
 };
 
 

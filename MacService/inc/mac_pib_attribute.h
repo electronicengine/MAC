@@ -15,10 +15,20 @@
 #include "messagetypes.h"
 
 
+enum MacPIBAttributeId
+{
+
+    owpan_addr,
+    owpan_coordinator,
+    beacon_order,
+    superframe_order
+
+};
+
 struct MacPIBAttribute
 {
 
-    uint64_t    owpan_addr;
+    uint8_t     owpan_addr[6];
     uint8_t     owpan_coordinatior;
     uint8_t     beacon_order;
     uint8_t     superframe_order;

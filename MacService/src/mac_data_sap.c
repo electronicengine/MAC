@@ -20,6 +20,9 @@ static int execute(struct MacCommand *Command, ServiceMessage *Message)
         ret = sap->ops.dataTransmitRequest(sap, Message);
         if(ret != FAIL)
             return DATA_COMMAND_RETURN;
+        else
+            return FAIL;
+
     }
     else if(Message->header.sub_type == receive)
     {
@@ -72,7 +75,6 @@ static int makeDataTransmitMessage(struct MacDataSap *Sap, uint8_t *Data, uint16
 
     ServiceMessage *phy_message = repo->getServiceMessage(repo);
     PhyData *pd = repo->getPhyData(repo);
-
 
     phy_message->header.type = phy_data;
     phy_message->header.sub_type = transmit;

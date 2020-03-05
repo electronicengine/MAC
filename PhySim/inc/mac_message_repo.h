@@ -5,19 +5,33 @@
 #include "messagetypes.h"
 #include "datamessages.h"
 #include "managementmessages.h"
+#include "macframe.h"
 
 #include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define MAX_COMMAND_SIZE   32
 
 
 
+struct MacMessageIndex
+{
+    int service_message;
+    int mcsp_data;
+    int mlme_associate;
+    int mlme_disassociate;
+    int mlme_get;
+    int mlme_scan;
+    int mlme_start;
+    int mlme_stop;
+    int raw_data;
 
+
+};
 
 struct MacMessageRepo
 {
+    struct MacMessageIndex index;
+
     ServiceMessage service_message[AVAILABLE_MESSAGE];
 
     MCSPData mcsp_data[AVAILABLE_MESSAGE];

@@ -40,6 +40,7 @@ struct MacServiceOperations
 
 struct MacService
 {
+
     struct MacServiceOperations ops;
     struct CommanderMac         commander_mac;
     struct MacManagementSap     mac_management_sap;
@@ -47,8 +48,6 @@ struct MacService
 
     struct MacMessageRepo       mac_message_repo;
     struct MacPIBAttribute      mac_pib_attribute;
-
-
 
 };
 

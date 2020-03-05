@@ -8,7 +8,7 @@ static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage 
 {
 
     uint8_t *raw_data = Repo->getRawData(Repo);
-    PLMECCA *plme_cca = (PLMECCA *)PhyMessage->payload;
+    PLMESet *plme_cca = (PLMESet *)PhyMessage->payload;
 
     raw_data[(*Index)++] = PhyMessage->header.type;
     raw_data[(*Index)++] = PhyMessage->header.sub_type;
@@ -33,7 +33,7 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *Message)
 
     printf("confirmingRequest SetPhy\n");
 
-    ((PLMECCA *)Message->payload)->reason = confirm;
+    ((PLMESet *)Message->payload)->reason = confirm;
 
     transmit_data = convertMessagetoRaw(repo, Message, &data_index);
 
@@ -47,7 +47,7 @@ static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, 
     if(Message->header.type == phy_management && Message->header.sub_type == set)
     {
 
-        switch (((PLMECCA *)Message->payload)->reason)
+        switch (((PLMESet *)Message->payload)->reason)
         {
 
             case request:

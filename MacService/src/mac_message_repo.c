@@ -28,6 +28,15 @@ void initMacMessageRepo(struct MacMessageRepo *Repo)
     Repo->getMlmeStop = getMlmeStop;
     Repo->setServiceMessage = setServiceMessage;
 
+    Repo->index.mcsp_data = 0;
+    Repo->index.mlme_associate = 0;
+    Repo->index.mlme_disassociate = 0;
+    Repo->index.mlme_get = 0;
+    Repo->index.mlme_scan = 0;
+    Repo->index.mlme_start = 0;
+    Repo->index.mlme_stop = 0;
+
+
 }
 
 
@@ -90,80 +99,72 @@ static ServiceMessage *setServiceMessage(struct MacMessageRepo *Repo, ServiceMes
 
 static ServiceMessage *getServiceMessage(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->service_message[index++];
+    if(Repo->index.service_message >= AVAILABLE_MESSAGE)
+        Repo->index.service_message = 0;
+    return &Repo->service_message[Repo->index.service_message++];
 }
 
 
 
 static MCSPData *getMcspData(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mcsp_data[index++];
+    if(Repo->index.mcsp_data >= AVAILABLE_MESSAGE)
+        Repo->index.mcsp_data = 0;
+    return &Repo->mcsp_data[Repo->index.mcsp_data++];
 }
 
 
 
 static MLMEAssociate *getMlmeAssociate(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mlme_associate[index++];
+    if(Repo->index.mlme_associate >= AVAILABLE_MESSAGE)
+        Repo->index.mlme_associate = 0;
+    return &Repo->mlme_associate[Repo->index.mlme_associate++];
 }
 
 
 
 static MLMEDisassociate *getMlmeDisassociate(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mlme_disassociate[index++];
+    if(Repo->index.mlme_disassociate >= AVAILABLE_MESSAGE)
+        Repo->index.mlme_disassociate = 0;
+    return &Repo->mlme_disassociate[Repo->index.mlme_disassociate++];
 }
 
 
 
 static MLMEGet *getMlmeGet(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mlme_get[index++];
+    if(Repo->index.mlme_get >= AVAILABLE_MESSAGE)
+        Repo->index.mlme_get = 0;
+    return &Repo->mlme_get[Repo->index.mlme_get++];
 }
 
 
 
 static MLMEScan *getMlmeScan(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mlme_scan[index++];
+    if(Repo->index.mlme_scan >= AVAILABLE_MESSAGE)
+        Repo->index.mlme_scan = 0;
+    return &Repo->mlme_scan[Repo->index.mlme_scan++];
 }
 
 
 
 static MLMEStart *getMlmeStart(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mlme_start[index++];
+    if(Repo->index.mlme_start >= AVAILABLE_MESSAGE)
+        Repo->index.mlme_start = 0;
+    return &Repo->mlme_start[Repo->index.mlme_start++];
 }
 
 
 
 static MLMEStop *getMlmeStop(struct MacMessageRepo *Repo)
 {
-    static int index = 0;
-    if(index > AVAILABLE_MESSAGE)
-        index = 0;
-    return &Repo->mlme_stop[index++];
+    if(Repo->index.mlme_stop >= AVAILABLE_MESSAGE)
+        Repo->index.mlme_stop = 0;
+    return &Repo->mlme_stop[Repo->index.mlme_stop++];
 }
 
 

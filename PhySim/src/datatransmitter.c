@@ -376,7 +376,7 @@ static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struc
     struct PhyMessageRepo *phy_repo = &Socket->phy_repo;
     struct MacMessageRepo *mac_repo = &Socket->mac_repo;
 
-    printf("confirm dataReceiveRequest\n");
+    printf("indication dataReceiveRequest\n");
 
     transmit_data = createIndicationMessage(phy_repo, mac_repo, &data_index);
 

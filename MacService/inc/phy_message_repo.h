@@ -10,9 +10,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+struct PhyMessageIndex
+{
+    int service_message;
+    int pd_data;
+    int plme_settrx;
+    int plme_get;
+    int plme_set;
+    int plme_switch;
+    int plme_cca;
+    int raw_data;
+};
 
 struct PhyMessageRepo
 {
+    struct PhyMessageIndex index;
     ServiceMessage  service_message[AVAILABLE_MESSAGE];
 
     PhyData pd_data[AVAILABLE_MESSAGE];

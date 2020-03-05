@@ -25,7 +25,6 @@ static void convertArray(struct MacService *Service, const char *AddrStr, uint8_
          ptr = strtok(NULL, delim);
     }
 
-
 }
 
 
@@ -39,6 +38,7 @@ static int connectNetwork(struct MacService *Service, char *OwpnaAddr)
 
 static int createNetwork(struct MacService *Service, char *OwpanAddr)
 {
+
     int ret;
 
     ServiceMessage *message = Service->mac_message_repo.getServiceMessage(&Service->mac_message_repo);
@@ -145,6 +145,7 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
     {
         printf("MCSP Transmite Request is FAILED\n");
     }
+
 }
 
 
@@ -246,6 +247,7 @@ static int receiveData(struct MacService *Service)
     {
         printf("MCSP Receive Request is FAILED\n");
     }
+
 }
 
 
@@ -263,10 +265,10 @@ void initMacService(struct MacService *Service, int Selection)
     initMacManagementSap(&Service->mac_management_sap);
     initMacMessageRepo(&Service->mac_message_repo);
 
-//    if(Selection == 1)
-//        createNetwork(Service, SERVER_OWPAN_ADDR);
-//    else if(Selection == 2)
-//        connectNetwork(Service, CLIENT_OWPAN_ADDR);
+    if(Selection == 1)
+        createNetwork(Service, SERVER_OWPAN_ADDR);
+    else if(Selection == 2)
+        connectNetwork(Service, CLIENT_OWPAN_ADDR);
 
 }
 

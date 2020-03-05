@@ -24,7 +24,7 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
             }
             else
             {
-                printf( "received confirm PLMESet Failed\n");
+                printf( "received confirm PLMECCA Failed\n");
                 return FAIL;
             }
 
@@ -37,7 +37,7 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
             }
             else
             {
-                printf( "received confirm PLMESet Failed\n");
+                printf( "received confirm PLMESetTrx Failed\n");
                 return FAIL;
             }
 
@@ -52,7 +52,7 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
             }
             else
             {
-                printf( "received confirm PLMESet Failed\n");
+                printf( "received confirm PhyData Failed\n");
                 return FAIL;
             }
 
@@ -66,7 +66,7 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
             }
             else
             {
-                printf( "received confirm PLMESet Failed\n");
+                printf( "received confirm PhyData Failed\n");
                 return FAIL;
             }
 
@@ -79,7 +79,7 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
             }
             else
             {
-                printf( "received confirm PLMESet Failed\n");
+                printf( "received confirm PLMEGet Failed\n");
                 return FAIL;
             }
 

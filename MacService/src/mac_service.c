@@ -49,7 +49,7 @@ static int createNetwork(struct MacService *Service, char *OwpanAddr)
 
     convertArray(Service, OwpanAddr, Service->mac_pib_attribute.owpan_addr);
 
-
+    printf("Owpan is staring...\n");
     message->header.type = mac_management;
     message->header.sub_type = start;
     message->header.length = sizeof(MLMEStart);
@@ -72,14 +72,14 @@ static int createNetwork(struct MacService *Service, char *OwpanAddr)
     ret = commander->ops.executeCommands(commander);
     commander->ops.clearCommands(commander);
 
-    if(ret == SUCCESS)
+    if(ret == FAIL)
     {
-        printf("MLME Start Request is SUCCESSFUL\n");
-        return SUCCESS;
+        printf("MLME Start Request is FAILED\n");
+        return FAIL;
     }
     else
     {
-        printf("MLME Start Request is FAILED\n");
+        printf("MLME Start Request is SUCCESSFUL\n");
         return SUCCESS;
     }
 
@@ -263,10 +263,10 @@ void initMacService(struct MacService *Service, int Selection)
     initMacManagementSap(&Service->mac_management_sap);
     initMacMessageRepo(&Service->mac_message_repo);
 
-    if(Selection == 1)
-        createNetwork(Service, SERVER_OWPAN_ADDR);
-    else if(Selection == 2)
-        connectNetwork(Service, CLIENT_OWPAN_ADDR);
+//    if(Selection == 1)
+//        createNetwork(Service, SERVER_OWPAN_ADDR);
+//    else if(Selection == 2)
+//        connectNetwork(Service, CLIENT_OWPAN_ADDR);
 
 }
 

@@ -38,6 +38,7 @@
 void initObserver(struct Observer *Observer)
 {
     memset(Observer, sizeof(*Observer), 0);
+
 }
 
 

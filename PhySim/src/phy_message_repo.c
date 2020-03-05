@@ -168,6 +168,8 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case switch_state:
 
+            printf("switch_state message\n");
+
             plme_switch = Repo->getPlmeSwitch(Repo);
 
             plme_switch->reason = RawData[index++];
@@ -185,6 +187,8 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case get:
 
+            printf("get message\n");
+
             plme_get = Repo->getPlmeGet(Repo);
 
             plme_get->reason = RawData[index++];
@@ -197,6 +201,9 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case set:
 
+            printf("set message\n");
+
+
             plme_set = Repo->getPlmeSet(Repo);
 
             plme_set->reason = RawData[index++];
@@ -208,9 +215,9 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case transmit:
 
-            pd_data = Repo->getPhyData(Repo);
+            printf("transmit data message\n");
 
-            printf("set receive message\n");
+            pd_data = Repo->getPhyData(Repo);
 
             pd_data->reason = RawData[index++];
 
@@ -225,6 +232,7 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
         case receive:
 
+            printf("receive data message\n");
 
             pd_data = Repo->getPhyData(Repo);
 

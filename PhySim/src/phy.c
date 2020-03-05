@@ -12,9 +12,11 @@ void initPhy(struct PhyService *Phy)
     initCCA(&Phy->cca);
     initDataTransmitter(&Phy->transmitter);
     initTrxState(&Phy->trx);
+    initSetPhy(&Phy->setphy);
     subject->operations.registerObserver(subject, &Phy->trx.observer);
     subject->operations.registerObserver(subject, &Phy->cca.observer);
     subject->operations.registerObserver(subject, &Phy->transmitter.observer);
+    subject->operations.registerObserver(subject, &Phy->setphy.observer);
 
 }
 

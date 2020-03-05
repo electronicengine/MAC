@@ -4,6 +4,7 @@
 
 #include "datatransmitter.h"
 #include "cca.h"
+#include "setphy.h"
 #include "trxstate.h"
 #include "macsocket.h"
 #include "subject.h"
@@ -25,6 +26,7 @@ struct PhyServiceOperations
 
 struct PhyService
 {
+    struct SetPhy setphy;
     struct CCA  cca;
     struct DataTransmitter transmitter;
     struct TRXState trx;

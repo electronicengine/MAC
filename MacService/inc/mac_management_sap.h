@@ -3,6 +3,10 @@
 
 #include "mac_command.h"
 #include "messagetypes.h"
+#include "mac_pib_attribute.h"
+
+
+#define CCA_MODE 1
 
 struct MacManagementSap;
 

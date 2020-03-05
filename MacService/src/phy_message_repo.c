@@ -199,6 +199,7 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *R
 
             plme_set->reason = RawData[index++];
             plme_set->pib_attribute = RawData[index++];
+            plme_set->pib_attribute_value = RawData[index++];
 
             message->payload = (uint8_t *)plme_set;
 

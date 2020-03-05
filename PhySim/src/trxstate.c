@@ -38,7 +38,7 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *PhyMessage
     if(PhyMessage->status_or_priorty == trx_off)
         printf("confirmingRequest settrx_trx_off\n");
 
-    ((PLMECCA *)PhyMessage->payload)->reason = confirm;
+    ((PLMESetTRX *)PhyMessage->payload)->reason = confirm;
 
     transmit_data = convertMessagetoRaw(repo, PhyMessage, &data_index);
 
@@ -55,6 +55,7 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *PhyMessage
 
 static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message)
 {
+
 
     if(Message->header.type == phy_management && Message->header.sub_type == set_trx)
     {

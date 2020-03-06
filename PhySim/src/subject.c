@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include "subject.h"
-#include "macsocket.h"
+#include "mac_socket.h"
 
 
 static int subjectOpsRegisterObserver(struct Subject *Subject, struct Observer *Observer)
@@ -59,7 +59,7 @@ static int subjectOpsRemoveObserver(struct Subject *Subject, struct Observer *Ob
 
 
 
-static int subjectOpsNotifyObservers(struct Subject *Subject, struct UnixSocket *Socket, ServiceMessage *Message)
+static int subjectOpsNotifyObservers(struct Subject *Subject, struct MacSocket *Socket, ServiceMessage *Message)
 {
 
     for (int i = 0; i < Subject->observer_queue; ++i)

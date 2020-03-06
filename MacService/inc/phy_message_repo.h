@@ -46,7 +46,7 @@ struct PhyMessageRepo
     PLMESwitch *(*getPlmeSwitch)(struct PhyMessageRepo *);
     uint8_t *(*getRawData)(struct PhyMessageRepo *);
 
-    ServiceMessage *(*setServiceData)(struct PhyMessageRepo *, uint8_t *);
+    ServiceMessage *(*setServiceMessage)(struct PhyMessageRepo *, uint8_t *);
 
 };
 

@@ -11,10 +11,10 @@
 enum PhyPIBAttributeId
 {
 
-    cca_mode,
-    owpan_coordinator,
-    beacon_order,
-    superframe_order
+    phy_cca_mode,
+    phy_owpan_coordinator,
+    phy_beacon_order,
+    phy_superframe_order
 
 };
 

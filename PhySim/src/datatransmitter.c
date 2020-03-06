@@ -1,7 +1,7 @@
 #include <datatransmitter.h>
 #include "phy.h"
 #include <memory.h>
-
+#include "wireless_socket.h"
 
 static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPayload, int *Index)
 {
@@ -337,7 +337,7 @@ static uint8_t *convertConfirmMessagetoRaw(struct PhyMessageRepo *Repo, ServiceM
 
 
 
-static void confirmDataTransmitRequest(struct DataTransmitter *Transmitter, struct UnixSocket *Socket, ServiceMessage *PhyMessage)
+static void confirmDataTransmitRequest(struct DataTransmitter *Transmitter, struct MacSocket *Socket, ServiceMessage *PhyMessage)
 {
 
     uint8_t *transmit_data;
@@ -368,7 +368,7 @@ static void confirmDataTransmitRequest(struct DataTransmitter *Transmitter, stru
 
 
 
-static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struct UnixSocket *Socket, ServiceMessage *PhyMessage)
+static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struct MacSocket *Socket, ServiceMessage *PhyMessage)
 {
 
     uint8_t *transmit_data;
@@ -386,7 +386,7 @@ static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struc
 
 
 
-static void spiDataUpdate(struct Observer *Obs, struct UnixSocket *Socket, ServiceMessage *Message)
+static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, ServiceMessage *Message)
 {
     struct DataTransmitter *transmitter = container_of(Obs, typeof(*transmitter), observer);
 
@@ -420,13 +420,15 @@ static void spiDataUpdate(struct Observer *Obs, struct UnixSocket *Socket, Servi
 
 
 
-void initDataTransmitter(struct DataTransmitter *Transmitter)
+void initDataTransmitter(struct DataTransmitter *Transmitter, struct WirelessSocket *Wireless)
 {
 
     Transmitter->operations.spiDataUpdate = spiDataUpdate;
 
     initObserver(&Transmitter->observer);
     Transmitter->observer.operation.update = spiDataUpdate;
+
+    Transmitter->wireless_socket = Wireless;
 
 }
 

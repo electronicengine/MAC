@@ -1,6 +1,6 @@
 #include "cca.h"
 #include "phy_message_repo.h"
-#include "macsocket.h"
+#include "mac_socket.h"
 
 
 
@@ -25,7 +25,7 @@ static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage 
 
 
 
-static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *Message)
+static void confirmRequest(struct MacSocket *Socket, ServiceMessage *Message)
 {
     uint8_t *transmit_data;
     struct PhyMessageRepo *repo = &Socket->phy_repo;
@@ -42,7 +42,7 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *Message)
 
 
 
-static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message)
+static void spiDataUpdate(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message)
 {
     if(Message->header.type == phy_management && Message->header.sub_type == cca)
     {

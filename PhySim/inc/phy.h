@@ -6,16 +6,13 @@
 #include "cca.h"
 #include "setphy.h"
 #include "trxstate.h"
-#include "macsocket.h"
+#include "mac_socket.h"
 #include "subject.h"
 #include "datamessages.h"
 #include "managementmessages.h"
+#include "wireless_socket.h"
 
 struct ChainBase;
-
-
-
-
 struct PhyService;
 
 
@@ -30,7 +27,8 @@ struct PhyService
     struct CCA  cca;
     struct DataTransmitter transmitter;
     struct TRXState trx;
-    struct UnixSocket unix_socket;
+    struct MacSocket mac_socket;
+    struct WirelessSocket wireless_socket;
 
     struct PhyServiceOperations operations;
 };

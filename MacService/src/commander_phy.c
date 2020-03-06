@@ -155,12 +155,12 @@ static int executeCommands(struct CommanderPhy *Commander)
 
                     if(ret == MANAGEMENT_COMMAND_RETURN)
                     {
-                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fms);
+                        message = repo->setServiceMessage(repo, Commander->commands[i]->raw_data_fms);
 
                     }
                     if(ret == DATA_COMMAND_RETURN || ret == DATA_RECEIVE_RETURN)
                     {
-                        message = repo->setServiceData(repo, Commander->commands[i]->raw_data_fds);
+                        message = repo->setServiceMessage(repo, Commander->commands[i]->raw_data_fds);
                     }
 
                     ret = checkMessage(Commander, message);

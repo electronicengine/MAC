@@ -1,7 +1,6 @@
 #include "phy_management_sap.h"
 
 
-
 static int execute(struct PhyCommand *Command, ServiceMessage *Message);
 static int setTrx(struct PhyManagementSap *Sap, ServiceMessage *Message);
 static int setCca(struct PhyManagementSap *Sap, ServiceMessage *Message);
@@ -65,6 +64,8 @@ static int setPhy(struct PhyManagementSap *Sap, ServiceMessage *Message)
     PLMESet *plme_set = (PLMESet *)Message->payload;
     int data_index = 0;
     int ret;
+
+    printf("atribute: %d, value: %d\n",plme_set->pib_attribute, plme_set->pib_attribute_value);
 
     Sap->command.raw_data_fms[data_index++] = Message->header.type;
     Sap->command.raw_data_fms[data_index++] = Message->header.sub_type;

@@ -17,10 +17,11 @@
 
 enum MacPIBAttributeId
 {
-    phy_cca_mode,
-    phy_owpan_coordinator,
-    phy_beacon_order,
-    phy_superframe_order
+
+    mac_owpan_addr,
+    mac_owpan_coordinator,
+    mac_beacon_order,
+    mac_superframe_order
 
 };
 

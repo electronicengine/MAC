@@ -1,6 +1,17 @@
 #include "setphy.h"
 #include "phy_message_repo.h"
-#include "macsocket.h"
+#include "mac_socket.h"
+
+
+
+static int startOwpan(struct SetPhy *Set, uint8_t OwpanCoord)
+{
+    printf("Owpan Starting... Owpa Coord: %d\n", OwpanCoord);
+
+//    Set->wireless_socket->ops.openServerPort()
+
+
+}
 
 
 
@@ -25,8 +36,9 @@ static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage 
 
 
 
-static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *Message)
+static void confirmRequest(struct SetPhy *Set, struct MacSocket *Socket, ServiceMessage *Message)
 {
+
     uint8_t *transmit_data;
     struct PhyMessageRepo *repo = &Socket->phy_repo;
     int data_index = 0;
@@ -35,15 +47,29 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *Message)
 
     ((PLMESet *)Message->payload)->reason = confirm;
 
+    if(((PLMESet *)Message->payload)->pib_attribute == cca_mode)
+        printf("cca_mode %d\n",((PLMESet *)Message->payload)->pib_attribute_value);
+    if(((PLMESet *)Message->payload)->pib_attribute == owpan_coordinator)
+        startOwpan(Set, ((PLMESet *)Message->payload)->pib_attribute_value);
+    if(((PLMESet *)Message->payload)->pib_attribute == beacon_order)
+        printf("beacon_order %d\n", ((PLMESet *)Message->payload)->pib_attribute_value);
+    if(((PLMESet *)Message->payload)->pib_attribute == superframe_order)
+        printf("superframe_order %d\n", ((PLMESet *)Message->payload)->pib_attribute_value);
+
     transmit_data = convertMessagetoRaw(repo, Message, &data_index);
 
     Socket->operations.setData(Socket, transmit_data, data_index);
+
 }
 
 
 
-static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message)
+static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, ServiceMessage *Message)
 {
+
+    struct SetPhy *set_phy = container_of(Obs, typeof(*set_phy), observer);
+
+
     if(Message->header.type == phy_management && Message->header.sub_type == set)
     {
 
@@ -52,14 +78,13 @@ static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, 
 
             case request:
 
-                confirmRequest(Socket, Message);
+                confirmRequest(set_phy, Socket, Message);
 
                 break;
 
             case confirm:
 
 //                respondRequest(Socket);
-
 
                 break;
 
@@ -74,16 +99,11 @@ static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, 
 
     }
 
-
-
 }
 
 
 
-
-
-
-void initSetPhy(struct SetPhy *Setphy)
+void initSetPhy(struct SetPhy *Setphy, struct WirelessSocket *Wireless)
 {
 
     Setphy->operations.spiDataUpdate = spiDataUpdate;
@@ -91,6 +111,8 @@ void initSetPhy(struct SetPhy *Setphy)
 
     initObserver(&Setphy->observer);
     Setphy->observer.operation.update = spiDataUpdate;
+
+    Setphy->wireless_socket = Wireless;
 
 }
 

@@ -30,7 +30,7 @@
 
 
 struct Subject;
-struct UnixSocket;
+struct MacSocket;
 
 
 struct SubjectOperations
@@ -38,7 +38,7 @@ struct SubjectOperations
 
         int (*registerObserver)(struct Subject *, struct Observer *Observer);
         int (*removeObserver)(struct Subject *, struct Observer *Observer);
-        int (*notifyObservers)(struct Subject *, struct UnixSocket *Socket, ServiceMessage *Message);
+        int (*notifyObservers)(struct Subject *, struct MacSocket *Socket, ServiceMessage *Message);
 
 };
 

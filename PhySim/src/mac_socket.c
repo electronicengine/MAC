@@ -1,4 +1,4 @@
-#include "macsocket.h"
+#include "mac_socket.h"
 
 
 //private variables
@@ -7,7 +7,7 @@ static volatile short int stop_thread = 1;
 
 
 
-int initMacSocket(struct UnixSocket *Socket)
+int initMacSocket(struct MacSocket *Socket)
 {
 
     initSubject(&Socket->subject);
@@ -26,21 +26,8 @@ int initMacSocket(struct UnixSocket *Socket)
 
 
 
-int initWirelessSocket(struct UnixSocket *Socket, uint8_t *OwpanIp)
-{
 
-    initMacMessageRepo(&Socket->mac_repo);
-    initPhyMessageRepo(&Socket->phy_repo);
-
-    Socket->operations.closePort = closePort;
-    Socket->operations.getData = getData;
-    Socket->operations.setData = setData;
-
-}
-
-
-
-static void createSocketThread(struct UnixSocket *Socket)
+static void createSocketThread(struct MacSocket *Socket)
 {
 
     pthread_create(&socket_thread, NULL, listenSocket, Socket);
@@ -55,7 +42,7 @@ static void *listenSocket(void *Socket)
 
     int bytes_rec;
     uint8_t transmitted_data[MAX_TRANSFER_SIZE];
-    struct UnixSocket *sock = Socket;
+    struct MacSocket *sock = Socket;
     struct Subject *subject = &sock->subject;
     ServiceMessage *message;
 
@@ -88,7 +75,7 @@ static void *listenSocket(void *Socket)
 
 
 
-static int getData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size)
+static int getData(struct MacSocket *Socket, uint8_t *TransmittedData, int Size)
 {
     int bytes_rec;
 
@@ -108,7 +95,7 @@ static int getData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size
 
 
 
-static int setData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size)
+static int setData(struct MacSocket *Socket, uint8_t *TransmittedData, int Size)
 {
 
     int rc;
@@ -135,7 +122,7 @@ static int setData(struct UnixSocket *Socket, uint8_t *TransmittedData, int Size
 
 
 
-static int closePort(struct UnixSocket *Socket)
+static int closePort(struct MacSocket *Socket)
 {
 
     stop_thread = 1;
@@ -149,7 +136,7 @@ static int closePort(struct UnixSocket *Socket)
 
 
 
-static int openPort(struct UnixSocket *Socket)
+static int openPort(struct MacSocket *Socket)
 {
 
     int len, rc;
@@ -217,7 +204,7 @@ static int openPort(struct UnixSocket *Socket)
 
 
 
-int deinitSocket(struct UnixSocket *Socket)
+int deinitSocket(struct MacSocket *Socket)
 {
 
 }

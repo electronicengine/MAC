@@ -61,7 +61,7 @@ static int execute(struct MacCommand *Command, ServiceMessage *Message)
 
 
 
-static int makeSetPhyMessage(struct MacManagementSap *Sap, uint8_t Attribute, uint8_t AttributeValue)
+static int makeSetPhyMessage(struct MacManagementSap *Sap, uint8_t AttributeId, uint8_t AttributeValue)
 {
 
     struct PhyMessageRepo *repo = &Sap->command.phy_messages_repo;
@@ -76,7 +76,7 @@ static int makeSetPhyMessage(struct MacManagementSap *Sap, uint8_t Attribute, ui
     phy_message->header.length = sizeof(plme_set);
 
     plme_set->reason = request;
-    plme_set->pib_attribute = Attribute;
+    plme_set->pib_attribute = AttributeId;
     plme_set->pib_attribute_value = AttributeValue;
 
     phy_message->payload = (uint8_t *)plme_set;
@@ -98,10 +98,10 @@ static int startOwpan(struct MacManagementSap *Sap, ServiceMessage *Message)
 
     printf("Mac StartOwpan\n");
 
-    makeSetPhyMessage(Sap, CCA_MODE, phy_cca_mode);
-    makeSetPhyMessage(Sap, mlme_start->beacon_order, phy_beacon_order);
-    makeSetPhyMessage(Sap, mlme_start->superframe_order, phy_superframe_order);
-    makeSetPhyMessage(Sap, mlme_start->owpan_coordinator, phy_owpan_coordinator);
+    makeSetPhyMessage(Sap, phy_cca_mode, CCA_MODE);
+    makeSetPhyMessage(Sap, phy_beacon_order, mlme_start->beacon_order);
+    makeSetPhyMessage(Sap, phy_superframe_order, mlme_start->superframe_order);
+    makeSetPhyMessage(Sap, phy_owpan_coordinator, mlme_start->owpan_coordinator);
 
     ret = commander->ops.executeCommands(commander);
 
@@ -117,8 +117,6 @@ static int startOwpan(struct MacManagementSap *Sap, ServiceMessage *Message)
         printf("Owpan has been started Succesfully\n");
         return SUCCESS;
     }
-
-
 
 }
 

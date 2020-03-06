@@ -5,7 +5,7 @@
 
 #include <inttypes.h>
 
-#define AVAILABLE_MESSAGE               10
+#define AVAILABLE_MESSAGE               4
 #define SERVICE_MESSAGE_HEADER_SIZE     4
 #define PAYLOAD_LINK_QUALITY_SIZE       1
 #define PAYLOAD_REASON_SIZE             1

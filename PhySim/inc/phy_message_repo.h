@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "phy_pib_attribute.h"
+
 struct PhyMessageIndex
 {
     int service_message;

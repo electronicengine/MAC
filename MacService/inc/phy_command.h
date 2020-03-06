@@ -3,7 +3,7 @@
 
 #include "socket.h"
 #include "messagetypes.h"
-#include "phy_pib_attribute .h"
+#include "phy_pib_attribute.h"
 
 struct PhyCommand;
 

@@ -1,6 +1,6 @@
 ﻿#include "trxstate.h"
 #include "phy_message_repo.h"
-#include "macsocket.h"
+#include "mac_socket.h"
 
 
 static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage *PhyMessage, int *Index)
@@ -24,7 +24,7 @@ static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage 
 
 
 
-static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *PhyMessage)
+static void confirmRequest(struct MacSocket *Socket, ServiceMessage *PhyMessage)
 {
 
     uint8_t *transmit_data;
@@ -53,7 +53,7 @@ static void confirmRequest(struct UnixSocket *Socket, ServiceMessage *PhyMessage
 
 
 
-static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message)
+static void spiDataUpdate(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message)
 {
 
 
@@ -71,13 +71,11 @@ static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, 
 
             case confirm:
 
-
                 break;
 
             case indication:
 
                 break;
-
 
             case response:
 
@@ -85,6 +83,7 @@ static void spiDataUpdate(struct Observer *Observer, struct UnixSocket *Socket, 
 
             default:
                 break;
+
         }
 
     }

@@ -14,7 +14,7 @@
 struct TRXStateOperations
 {
 
-    void (*spiDataUpdate)(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message);
+    void (*spiDataUpdate)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message);
 
 };
 

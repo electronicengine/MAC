@@ -27,12 +27,12 @@
 #include "messagetypes.h"
 
 struct Observer;
-struct UnixSocket;
+struct MacSocket;
 
 
 struct ObserverOperation
 {
-        void (*update)(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message);
+        void (*update)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message);
 };
 
 

@@ -7,17 +7,18 @@
 #include <time.h>
 #include "macframe.h"
 #include "datamessages.h"
-#include "macsocket.h"
+#include "mac_socket.h"
 
 
 #define container_of(ptr, type, member) \
     ((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
+struct WirelessSocket;
 
 struct DataTransmitterOperations
 {
 
-    void (*spiDataUpdate)(struct Observer *Observer, struct UnixSocket *Socket, ServiceMessage *Message);
+    void (*spiDataUpdate)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message);
 
 };
 
@@ -26,10 +27,9 @@ struct DataTransmitterOperations
 struct DataTransmitter
 {
 
-
     struct DataTransmitterOperations operations;
     struct Observer observer;
-    struct UnixSocket wireles_socket;
+    struct WirelessSocket *wireless_socket;
 
     MCSPData mcsp_data;
     MacFrameFormat mac_frame;
@@ -38,6 +38,6 @@ struct DataTransmitter
 };
 
 
-void initDataTransmitter(struct DataTransmitter *Transmitter);
+void initDataTransmitter(struct DataTransmitter *Transmitter, struct WirelessSocket *Wireless);
 
 #endif

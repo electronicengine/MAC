@@ -19,7 +19,7 @@ static ServiceMessage *setServiceMessage(struct PhyMessageRepo *, uint8_t *);
 void initPhyMessageRepo(struct PhyMessageRepo *Repo)
 {
 
-    Repo->setServiceData = setServiceMessage;
+    Repo->setServiceMessage = setServiceMessage;
     Repo->getServiceMessage = getServiceMessage;
     Repo->getPhyData = getPhyData;
     Repo->getPlmeCca = getPlmeCca;

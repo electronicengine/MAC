@@ -60,7 +60,6 @@ static ServiceMessage *setServiceMessage(struct MacMessageRepo *Repo, ServiceMes
     {
         case receive:
 
-
             mac_message->header.type = mac_data;
             mac_message->header.sub_type = receive;
             mac_message->header.length  = PhyMessage->header.length;

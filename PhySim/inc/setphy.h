@@ -11,7 +11,6 @@
 #include "messagetypes.h"
 #include "managementmessages.h"
 #include "datamessages.h"
-#include "wireless_socket.h"
 
 
 
@@ -35,7 +34,7 @@ struct SetPhy
 
 
 
-void initSetPhy(struct SetPhy *Setphy, struct WirelessSocket *Wireless);
+void initSetPhy(struct SetPhy *Setphy);
 
 
 #endif

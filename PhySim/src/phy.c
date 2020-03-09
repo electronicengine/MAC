@@ -8,12 +8,11 @@ void initPhy(struct PhyService *Phy)
     struct Subject *subject = &Phy->mac_socket.subject;
 
     initMacSocket(&Phy->mac_socket);
-    initWirelessSocket(&Phy->wireless_socket);
 
     initCCA(&Phy->cca);
-    initDataTransmitter(&Phy->transmitter, &Phy->wireless_socket);
+    initDataTransmitter(&Phy->transmitter);
     initTrxState(&Phy->trx);
-    initSetPhy(&Phy->setphy, &Phy->wireless_socket);
+    initSetPhy(&Phy->setphy);
 
     subject->operations.registerObserver(subject, &Phy->trx.observer);
     subject->operations.registerObserver(subject, &Phy->cca.observer);

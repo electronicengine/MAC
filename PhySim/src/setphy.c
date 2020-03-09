@@ -8,8 +8,11 @@ static int startOwpan(struct SetPhy *Set, uint8_t OwpanCoord)
 {
     printf("Owpan Starting... Owpa Coord: %d\n", OwpanCoord);
 
-//    Set->wireless_socket->ops.openServerPort()
 
+    if(OwpanCoord == 1)
+        Set->observer.wireless_socket.ops.openServerPort(&Set->observer.wireless_socket);
+    else if(OwpanCoord == 0)
+        Set->observer.wireless_socket.ops.openClientPort(&Set->observer.wireless_socket);
 
 }
 
@@ -19,14 +22,14 @@ static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage 
 {
 
     uint8_t *raw_data = Repo->getRawData(Repo);
-    PLMESet *plme_cca = (PLMESet *)PhyMessage->payload;
+    PLMESet *plme_set = (PLMESet *)PhyMessage->payload;
 
     raw_data[(*Index)++] = PhyMessage->header.type;
     raw_data[(*Index)++] = PhyMessage->header.sub_type;
     raw_data[(*Index)++] = PhyMessage->header.length & 0xff;
     raw_data[(*Index)++] = (PhyMessage->header.length >> 8) & 0xff;
 
-    raw_data[(*Index)++] = plme_cca->reason;
+    raw_data[(*Index)++] = plme_set->reason;
 
     raw_data[(*Index)++] = PhyMessage->status_or_priorty;
 
@@ -103,7 +106,7 @@ static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, Servic
 
 
 
-void initSetPhy(struct SetPhy *Setphy, struct WirelessSocket *Wireless)
+void initSetPhy(struct SetPhy *Setphy)
 {
 
     Setphy->operations.spiDataUpdate = spiDataUpdate;
@@ -111,8 +114,6 @@ void initSetPhy(struct SetPhy *Setphy, struct WirelessSocket *Wireless)
 
     initObserver(&Setphy->observer);
     Setphy->observer.operation.update = spiDataUpdate;
-
-    Setphy->wireless_socket = Wireless;
 
 }
 

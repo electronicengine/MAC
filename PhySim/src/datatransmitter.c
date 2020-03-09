@@ -1,7 +1,6 @@
 #include <datatransmitter.h>
 #include "phy.h"
 #include <memory.h>
-#include "wireless_socket.h"
 
 static int extractMacFrame(struct DataTransmitter *Transmitter, uint8_t *McspPayload, int *Index)
 {
@@ -420,15 +419,13 @@ static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, Servic
 
 
 
-void initDataTransmitter(struct DataTransmitter *Transmitter, struct WirelessSocket *Wireless)
+void initDataTransmitter(struct DataTransmitter *Transmitter)
 {
 
     Transmitter->operations.spiDataUpdate = spiDataUpdate;
 
     initObserver(&Transmitter->observer);
     Transmitter->observer.operation.update = spiDataUpdate;
-
-    Transmitter->wireless_socket = Wireless;
 
 }
 

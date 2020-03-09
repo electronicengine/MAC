@@ -38,6 +38,6 @@ struct DataTransmitter
 };
 
 
-void initDataTransmitter(struct DataTransmitter *Transmitter, struct WirelessSocket *Wireless);
+void initDataTransmitter(struct DataTransmitter *Transmitter);
 
 #endif

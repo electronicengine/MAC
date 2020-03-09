@@ -25,6 +25,7 @@
 #include <inttypes.h>
 
 #include "messagetypes.h"
+#include "wireless_socket.h"
 
 struct Observer;
 struct MacSocket;
@@ -39,6 +40,7 @@ struct ObserverOperation
 struct Observer
 {
         struct ObserverOperation operation;
+        struct WirelessSocket wireless_socket;
 };
 
 

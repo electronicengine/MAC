@@ -126,7 +126,6 @@ static PLMESwitch *getPlmeSwitch(struct PhyMessageRepo *Repo)
 
 
 
-
 static ServiceMessage *setServiceMessage(struct PhyMessageRepo *Repo, uint8_t *RawData)
 {
     int index = 0;

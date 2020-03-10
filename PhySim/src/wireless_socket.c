@@ -16,13 +16,6 @@ static struct WirelessSocket *uniueq_socket;
 
 
 
-void startBeacon(struct WirelessSocket *Socket)
-{
-
-}
-
-
-
 int initWirelessSocket(struct WirelessSocket *Socket)
 {
 
@@ -34,6 +27,7 @@ int initWirelessSocket(struct WirelessSocket *Socket)
         return SUCCESS;
     }
 
+    printf("initwireless...!!!\n");
     initMacMessageRepo(&Socket->mac_repo);
     initPhyMessageRepo(&Socket->phy_repo);
 
@@ -41,7 +35,7 @@ int initWirelessSocket(struct WirelessSocket *Socket)
     Socket->ops.getData = getData;
     Socket->ops.setData = setData;
     Socket->ops.openServerPort = openServerPort;
-    Socket->ops.openClientPort = openServerPort;
+    Socket->ops.openClientPort = openClientPort;
 
     already_exist = 1;
 
@@ -55,6 +49,7 @@ int initWirelessSocket(struct WirelessSocket *Socket)
 
 static int getData(struct WirelessSocket *Socket, uint8_t *TransmittedData, int Size)
 {
+
     int bytes_rec;
 
     bytes_rec = recv(Socket->client_sock, TransmittedData, Size, 0);
@@ -65,6 +60,7 @@ static int getData(struct WirelessSocket *Socket, uint8_t *TransmittedData, int 
         printf("WIRELESS RECV ERROR: \n");
         close(Socket->server_sock);
         close(Socket->client_sock);
+
         return bytes_rec;
 
     }
@@ -89,6 +85,7 @@ static int setData(struct WirelessSocket *Socket, uint8_t *TransmittedData, int 
         return rc;
 
     }
+
 }
 
 
@@ -156,16 +153,21 @@ static int openClientPort(struct WirelessSocket *Socket)
     Socket->server_sockaddr.sun_family = AF_UNIX;
     strcpy(Socket->server_sockaddr.sun_path, SERVER_ADDR);
 
-
     do
     {
         rc = connect(Socket->client_sock, (struct sockaddr *) &Socket->server_sockaddr, len);
-        printf("CONNECT ERROR \n");
+        printf("WIRELESS CONNECT ERROR \n");
         usleep(100000);
 
     }while(rc == -1);
 
-    //setting timeout
+
+//    pthread_create(&socket_thread, NULL, listenSocket, Socket);
+//    pthread_detach(socket_thread);
+
+    return SUCCESS;
+
+//    setting timeout
 
 //    struct timeval timeout;
 //    timeout.tv_sec = 10;
@@ -200,7 +202,7 @@ static int openServerPort(struct WirelessSocket *Socket)
 
     if(Socket->server_sock == FAIL)
     {
-        printf("SOCKET ERROR: \n");
+        printf("WIRELESS SOCKET ERROR: \n");
         return Socket->server_sock;
     }
 
@@ -220,7 +222,7 @@ static int openServerPort(struct WirelessSocket *Socket)
     rc = bind(Socket->server_sock, (struct sockaddr *)&Socket->server_sockaddr, len);
     if(rc == -1)
     {
-        printf("BIND ERROR:\n");
+        printf("WIRELESS BIND ERROR:\n");
         close(Socket->server_sock);
         return rc;
     }
@@ -231,12 +233,12 @@ static int openServerPort(struct WirelessSocket *Socket)
     rc = listen(Socket->server_sock, BACKLOG_WIRELESS);
     if (rc == FAIL)
     {
-        printf("LISTEN ERROR: \n");
+        printf("WIRELESS LISTEN ERROR: \n");
         close(Socket->server_sock);
         return rc;
     }
 
-    printf("Waiting PhySim...\n");
+    printf("Waiting Other Wireless Host...\n");
 
     /*********************************/
     /* Accept an incoming connection */
@@ -244,14 +246,14 @@ static int openServerPort(struct WirelessSocket *Socket)
     Socket->client_sock = accept(Socket->server_sock, (struct sockaddr *)&Socket->client_sockaddr, &len);
     if(Socket->client_sock == FAIL)
     {
-        printf("ACCEPT ERROR: \n");
+        printf("WIRELESS ACCEPT ERROR: \n");
         close(Socket->server_sock);
         close(Socket->client_sock);
 
         return Socket->client_sock;
     }
 
-    printf("Unix Socket Opened\n");
+    printf("wireless Socket has been Opened\n");
 
     socket_opened = 1;
     uniueq_socket = Socket;
@@ -262,15 +264,20 @@ static int openServerPort(struct WirelessSocket *Socket)
     rc = getpeername(Socket->client_sock, (struct sockaddr *) &Socket->client_sockaddr, &len);
     if (rc == FAIL)
     {
-        printf("GETPEERNAME ERROR: \n");
+        printf("WIRELESS GETPEERNAME ERROR: \n");
         close(Socket->server_sock);
         close(Socket->client_sock);
         return rc;
     }
     else
     {
-        printf("Client socket filepath: %s\n", Socket->client_sockaddr.sun_path);
+        printf("WIRELESS Client socket filepath: %s\n", Socket->client_sockaddr.sun_path);
     }
+
+
+//    pthread_create(&socket_thread, NULL, startBeacon, Socket);
+//    pthread_detach(socket_thread);
+
 
     return SUCCESS;
 
@@ -282,6 +289,7 @@ static int openServerPort(struct WirelessSocket *Socket)
 
 //    setsockopt(Socket->server_sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
 //    setsockopt(Socket->client_sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&timeout, sizeof(timeout));
+
 
 }
 

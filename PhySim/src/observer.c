@@ -27,10 +27,7 @@
 
 
 
-//static void observerUpdate(struct Observer *Observer, char *Operation, char *Record)
-//{
-//    printf("observer::update()\n");
-//}
+
 
 
 

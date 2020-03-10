@@ -21,6 +21,19 @@
 
 struct WirelessSocket;
 
+
+
+typedef struct
+{
+    uint8_t     preamble;
+    uint8_t     phy_header;
+    uint16_t    length;
+    uint8_t     *service_message;
+
+}Beacon;
+
+
+
 struct WirelessSocketOperations
 {
 

@@ -30,7 +30,6 @@ static uint8_t *convertMessagetoRaw(struct PhyMessageRepo *Repo, ServiceMessage 
     raw_data[(*Index)++] = (PhyMessage->header.length >> 8) & 0xff;
 
     raw_data[(*Index)++] = plme_set->reason;
-
     raw_data[(*Index)++] = PhyMessage->status_or_priorty;
 
     return raw_data;

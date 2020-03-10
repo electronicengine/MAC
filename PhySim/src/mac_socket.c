@@ -26,7 +26,6 @@ int initMacSocket(struct MacSocket *Socket)
 
 
 
-
 static void createSocketThread(struct MacSocket *Socket)
 {
 
@@ -70,13 +69,13 @@ static void *listenSocket(void *Socket)
 
     printf("Socket Thread is ending...\n");
 
-
 }
 
 
 
 static int getData(struct MacSocket *Socket, uint8_t *TransmittedData, int Size)
 {
+
     int bytes_rec;
 
     bytes_rec = recv(Socket->client_sock, TransmittedData, Size, 0);

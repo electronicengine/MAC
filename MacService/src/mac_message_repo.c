@@ -75,7 +75,7 @@ static ServiceMessage *setServiceMessage(struct MacMessageRepo *Repo, ServiceMes
 
             mcsp_data->frame_handle = raw_data[data_index++];
 
-            mcsp_data->frame = &raw_data[data_index];
+            mcsp_data->msdu = &raw_data[data_index];
             data_index += mac_message->header.length + MAC_FRAME_SIZE_OFFSET;
 
             mcsp_data->protect_enable = raw_data[data_index++];

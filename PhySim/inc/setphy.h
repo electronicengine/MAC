@@ -21,7 +21,7 @@
 struct SetPhyOperations
 {
 
-    void (*spiDataUpdate)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message);
+    void (*updateSocket)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData);
 
 };
 

@@ -38,7 +38,7 @@ struct SubjectOperations
 
         int (*registerObserver)(struct Subject *, struct Observer *Observer);
         int (*removeObserver)(struct Subject *, struct Observer *Observer);
-        int (*notifyObservers)(struct Subject *, struct MacSocket *Socket, ServiceMessage *Message);
+        int (*notifyObservers)(struct Subject *, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData);
 
 };
 

@@ -59,14 +59,14 @@ static int subjectOpsRemoveObserver(struct Subject *Subject, struct Observer *Ob
 
 
 
-static int subjectOpsNotifyObservers(struct Subject *Subject, struct MacSocket *Socket, ServiceMessage *Message)
+static int subjectOpsNotifyObservers(struct Subject *Subject, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData)
 {
 
     for (int i = 0; i < Subject->observer_queue; ++i)
     {
         if (Subject->observers[i])
         {
-            Subject->observers[i]->operation.update(Subject->observers[i], Socket, Message);
+            Subject->observers[i]->operation.update(Subject->observers[i], Socket, Message, TransitData);
         }
 	}
 

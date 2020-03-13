@@ -24,9 +24,9 @@ int main()
 
     initMacService(&mac, selection);
 
-    mac.ops.sendData(&mac, (uint8_t *)data, 11);
+    mac.ops.sendData(&mac,  "21.21.21.21.21.21", (uint8_t *)data, 11);
 
-    mac.ops.receiveData(&mac);
+//    mac.ops.receiveData(&mac);
 
     return 0;
 

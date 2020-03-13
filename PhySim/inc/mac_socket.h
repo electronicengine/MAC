@@ -16,8 +16,6 @@
 #include "phy_message_repo.h"
 
 #define MAX_TRANSFER_SIZE   1500
-#define SERVER_PATH         "/dev/mac01"
-#define CLIENT_PATH         "/dev/physim"
 #define BACKLOG             10
 
 

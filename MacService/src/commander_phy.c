@@ -43,7 +43,6 @@ static int checkMessage(struct CommanderPhy *Commander, ServiceMessage *Message)
 
         case transmit:
 
-
             if(((PhyData *)Message->payload)->reason == confirm)
             {
                 printf( "received confirm PhyData Transmit\n");
@@ -128,7 +127,6 @@ static int executeCommands(struct CommanderPhy *Commander)
     struct PhyMessageRepo *repo = &Commander->rx_repo;
     ServiceMessage *message;
 
-
     if(Commander->commands[0])
     {
         for(int i=0; i < Commander->command_index; i++)
@@ -151,7 +149,6 @@ static int executeCommands(struct CommanderPhy *Commander)
                 }
                 else
                 {
-
 
                     if(ret == MANAGEMENT_COMMAND_RETURN)
                     {

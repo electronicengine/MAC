@@ -35,7 +35,7 @@ typedef struct
     uint8_t         destination_address[6]; //
     uint8_t         source_address[6];
     uint8_t         frame_handle;
-    uint8_t         *frame;
+    uint8_t         *msdu;
     uint8_t         protect_enable;
     uint8_t         timestamp[6];
 

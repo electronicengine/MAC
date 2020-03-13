@@ -53,7 +53,7 @@ static void confirmRequest(struct MacSocket *Socket, ServiceMessage *PhyMessage)
 
 
 
-static void spiDataUpdate(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message)
+static void updateSocket(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData)
 {
 
 
@@ -98,7 +98,7 @@ void initTrxState(struct TRXState *Trx)
 
     initObserver(&Trx->observer);
 
-    Trx->observer.operation.update = spiDataUpdate;
+    Trx->observer.operation.update = updateSocket;
 
 }
 

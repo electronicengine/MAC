@@ -21,7 +21,7 @@ typedef struct
 {
 
     MassageReason       reason;
-    uint64_t            owpan_id :48;
+    uint64_t            owpan_id : 48;
     uint64_t            device_address : 48;
     uint16_t            short_address;
 

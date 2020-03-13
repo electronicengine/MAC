@@ -4,11 +4,18 @@
 //private variables
 static pthread_t socket_thread;
 static volatile short int stop_thread = 1;
-
+static char server_path[20];
+static char client_path[20];
 
 
 int initMacSocket(struct MacSocket *Socket)
 {
+
+    printf("enter server name\n");
+    scanf("%s", server_path);
+
+    printf("enter client name\n");
+    scanf("%s", client_path);
 
     initSubject(&Socket->subject);
 
@@ -62,7 +69,7 @@ static void *listenSocket(void *Socket)
         if(bytes_rec > 0)
         {
             message = sock->phy_repo.setServiceData(&sock->phy_repo, transmitted_data);
-            subject->operations.notifyObservers(subject, sock, message);
+            subject->operations.notifyObservers(subject, sock, message, transmitted_data);
         }
 
     }
@@ -148,11 +155,6 @@ static int openPort(struct MacSocket *Socket)
     /**************************************/
     Socket->client_sock= socket(AF_UNIX, SOCK_STREAM, 0);
 
-    if(Socket->client_sock == -1)
-    {
-        printf("SOCKET ERROR: \n");
-        return Socket->client_sock;
-    }
 
     /***************************************/
     /* Set up the UNIX sockaddr structure  */
@@ -163,10 +165,10 @@ static int openPort(struct MacSocket *Socket)
     /* succeed, then bind to that file.    */
     /***************************************/
     Socket->client_sockaddr.sun_family = AF_UNIX;
-    strcpy(Socket->client_sockaddr.sun_path, CLIENT_PATH);
+    strcpy(Socket->client_sockaddr.sun_path, client_path);
     len = sizeof(Socket->client_sockaddr);
 
-    unlink(CLIENT_PATH);
+    unlink(client_path);
     rc = bind(Socket->client_sock, (struct sockaddr *)&Socket->client_sockaddr, len);
     if(rc == -1)
     {
@@ -181,7 +183,7 @@ static int openPort(struct MacSocket *Socket)
     /* to it.                              */
     /***************************************/
     Socket->server_sockaddr.sun_family = AF_UNIX;
-    strcpy(Socket->server_sockaddr.sun_path, SERVER_PATH);
+    strcpy(Socket->server_sockaddr.sun_path, server_path);
     rc = connect(Socket->client_sock, (struct sockaddr *) &Socket->server_sockaddr, len);
     if(rc == -1)
     {

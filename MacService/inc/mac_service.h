@@ -31,8 +31,8 @@ struct MacServiceOperations
 
     int (*connectNetwork)(struct MacService *Service, char *OwpanAddr);
     int (*createNetwork)(struct MacService *Service, char *OwpanAddr);
-    int (*sendData)(struct MacService *Service, uint8_t *Data, uint16_t Length);
-    int (*receiveData)(struct MacService *Service);
+    int (*sendData)(struct MacService *Service, char *DestinationAddr, uint8_t *Data, uint16_t Length);
+    int (*receiveData)(struct MacService *Service, char *SourceAddr);
 
 };
 

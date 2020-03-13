@@ -32,7 +32,9 @@ static int executeCommands(struct CommanderMac *Commander)
                 {
                     if(ret == DATA_RECEIVE_RETURN)
                     {
+
                         ServiceMessage message;
+
                         printf("MAC DATA_RECEIVE_RETURN\n");
 
                         mac_message = Commander->rx_repo.setServiceMessage(&Commander->rx_repo,
@@ -70,7 +72,6 @@ static int appendCommand(struct CommanderMac *Commander, struct MacCommand *Comm
 
     printf("commander mac append message %d\n", Commander->command_index);
 
-
     Commander->commands[Commander->command_index] = Command;
     Commander->messages[Commander->command_index] = Message;
     Commander->command_index++;
@@ -90,6 +91,7 @@ static int clearCommands(struct CommanderMac *Commander)
     }
 
     Commander->command_index = 0;
+
 }
 
 

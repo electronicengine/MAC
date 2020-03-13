@@ -42,7 +42,7 @@ static void confirmRequest(struct MacSocket *Socket, ServiceMessage *Message)
 
 
 
-static void spiDataUpdate(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message)
+static void updateSocket(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData)
 {
     if(Message->header.type == phy_management && Message->header.sub_type == cca)
     {
@@ -86,11 +86,11 @@ static void spiDataUpdate(struct Observer *Observer, struct MacSocket *Socket, S
 void initCCA(struct CCA *cca)
 {
 
-    cca->operations.spiDataUpdate = spiDataUpdate;
+    cca->operations.updateSocket = updateSocket;
 
 
     initObserver(&cca->observer);
-    cca->observer.operation.update = spiDataUpdate;
+    cca->observer.operation.update = updateSocket;
 
 }
 

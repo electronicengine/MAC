@@ -6,6 +6,8 @@
 #include "mac_command.h"
 #include "messagetypes.h"
 #include "mac_frames.h"
+#include "management_frames.h"
+#include "control_frames.h"
 
 #define SETTRX_SIZE    1
 
@@ -20,12 +22,14 @@ struct MacDataSapOperations
 };
 
 
+
 struct MacDataSap
 {
     struct MacCommand command;
     struct MacDataSapOperations ops;
 
 };
+
 
 
 void initMacDataSap(struct MacDataSap *Sap);

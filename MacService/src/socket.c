@@ -2,6 +2,7 @@
 
 //private Variable
 static struct Socket *uniueq_socket;
+static char socket_path[20];
 
 //public functions
 static int closeSocket(struct Socket *Soc);
@@ -15,13 +16,11 @@ static int openSocket(struct Socket *Soc)
 {
 
     int len, rc;
-    static int socket_opened = 0;
 
-    if(socket_opened != 0)
-    {
-        memcpy(Soc, uniueq_socket, sizeof(struct Socket));
-        return SUCCESS;
-    }
+
+    printf("Enter MacPath Name \n");
+    scanf("%s", socket_path);
+
 
     memset(&Soc->server_sockaddr, 0, sizeof(struct sockaddr_un));
     memset(&Soc->client_sockaddr, 0, sizeof(struct sockaddr_un));
@@ -46,10 +45,10 @@ static int openSocket(struct Socket *Soc)
     /* succeed, then bind to that file.    */
     /***************************************/
     Soc->server_sockaddr.sun_family = AF_UNIX;
-    strcpy(Soc->server_sockaddr.sun_path, SOCK_PATH);
+    strcpy(Soc->server_sockaddr.sun_path, socket_path);
     len = sizeof(Soc->server_sockaddr);
 
-    unlink(SOCK_PATH);
+    unlink(socket_path);
     rc = bind(Soc->server_sock, (struct sockaddr *)&Soc->server_sockaddr, len);
     if(rc == -1)
     {
@@ -86,8 +85,6 @@ static int openSocket(struct Socket *Soc)
 
     printf("Unix Socket Opened\n");
 
-    socket_opened = 1;
-    uniueq_socket = Soc;
     /****************************************/
     /* Get the name of the connected socket */
     /****************************************/
@@ -167,8 +164,16 @@ static int closeSocket(struct Socket *Soc)
 
 
 
-void initSocket(struct Socket *Sock)
+int initSocket(struct Socket *Sock)
 {
+
+    static int socket_opened = 0;
+
+    if(socket_opened != 0)
+    {
+        memcpy(Sock, uniueq_socket, sizeof(struct Socket));
+        return SUCCESS;
+    }
 
     Sock->ops.closeSocket = closeSocket;
     Sock->ops.transmitData = transmitData;
@@ -176,6 +181,11 @@ void initSocket(struct Socket *Sock)
     Sock->ops.openSocket = openSocket;
 
     openSocket(Sock);
+
+    socket_opened = 1;
+    uniueq_socket = Sock;
+
+    return SUCCESS;
 }
 
 

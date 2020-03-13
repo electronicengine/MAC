@@ -18,7 +18,7 @@ typedef enum
     pmphymcs_type,
     hbphyrates_type,
     reserved_type,
-    variable_element_container_type,
+    variable_element_containertype,
     probe_request_type,
     probe_response_type,
     attribute_change_request,

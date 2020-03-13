@@ -48,7 +48,7 @@ struct Socket
 
 
 
-void initSocket(struct Socket *Sock);
+int initSocket(struct Socket *Sock);
 void deinitSocket(struct Socket *Sock);
 
 

@@ -54,10 +54,10 @@ static int convertFrametoRaw(struct PhyDataSap *Sap, uint8_t *MacFrame, int *Dat
 
     Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[0];
     Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[1];
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[2];;
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[3];;
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[4];;
-    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[5];;
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[2];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[3];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[4];
+    Sap->command.raw_data_fds[(*DataIndex)++] = header->receiver_address[5];
 
     Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[0];
     Sap->command.raw_data_fds[(*DataIndex)++] = header->transmitter_address[1];
@@ -88,7 +88,6 @@ static int convertFrametoRaw(struct PhyDataSap *Sap, uint8_t *MacFrame, int *Dat
     Sap->command.raw_data_fds[(*DataIndex)++] = ((mac_frame->fcs) >> 16) & 0xff;
     Sap->command.raw_data_fds[(*DataIndex)++] = ((mac_frame->fcs) >> 24) & 0xff;
 
-
 }
 
 
@@ -116,7 +115,7 @@ static int convertMcspMessagetoRaw(struct PhyDataSap *Sap, uint8_t *Payload, int
 
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->frame_handle;
 
-    convertFrametoRaw(Sap, mcsp->frame, DataIndex);
+    convertFrametoRaw(Sap, mcsp->msdu, DataIndex);
 
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->protect_enable;
 
@@ -126,7 +125,6 @@ static int convertMcspMessagetoRaw(struct PhyDataSap *Sap, uint8_t *Payload, int
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->timestamp[3];
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->timestamp[4];
     Sap->command.raw_data_fds[(*DataIndex)++] = mcsp->timestamp[5];
-
 
 }
 
@@ -142,7 +140,6 @@ static int convertPhyMessagetoRaw(struct PhyDataSap *Sap, uint8_t *PhyMessage, i
     convertMcspMessagetoRaw(Sap, pd->payload, DataIndex);
 
     Sap->command.raw_data_fds[(*DataIndex)++] = pd->link_quality;
-
 
 }
 
@@ -169,7 +166,6 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
 
     printf("Data Size: %d\n", data_index);
 
-
     ret = sock->ops.transmitData(sock, Sap->command.raw_data_fds, data_index);
     if(ret != FAIL)
         return sock->ops.receiveData(sock, Sap->command.raw_data_fds, data_index);
@@ -180,6 +176,7 @@ static int dataTransmitRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessag
 
 static int dataReceiveRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessage)
 {
+
     struct Socket *sock = &Sap->command.sock;
     PhyData *pd = (PhyData *)PhyMessage->payload;
 
@@ -203,6 +200,7 @@ static int dataReceiveRequest(struct PhyDataSap *Sap, ServiceMessage *PhyMessage
     ret = sock->ops.transmitData(sock, Sap->command.raw_data_fds, data_index);
     if(ret != FAIL)
         return sock->ops.receiveData(sock, Sap->command.raw_data_fds, MAX_MESSAGE_SIZE);
+
 }
 
 

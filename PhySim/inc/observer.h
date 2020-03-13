@@ -32,7 +32,7 @@ struct MacSocket;
 
 struct ObserverOperation
 {
-        void (*update)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message);
+        void (*update)(struct Observer *Observer, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData);
 };
 
 

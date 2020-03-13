@@ -38,8 +38,6 @@ void initObserver(struct Observer *Observer)
 
     initWirelessSocket(&Observer->wireless_socket);
 
-    memset(Observer, sizeof(*Observer), 0);
-
 }
 
 

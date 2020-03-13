@@ -4,8 +4,8 @@
 
 static int connectNetwork(struct MacService *Service, char *OwpanAddr);
 static int createNetwork(struct MacService *Service, char *OwpanAddr);
-static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length);
-static int receiveData(struct MacService *Service);
+static int sendData(struct MacService *Service, char *DestinationAddr, uint8_t *Data, uint16_t Lengt);
+static int receiveData(struct MacService *Service, char *DestinationAddr);
 
 
 
@@ -24,13 +24,56 @@ static void convertArray(struct MacService *Service, const char *AddrStr, uint8_
          AddrArr[i] = atoi(ptr);
          ptr = strtok(NULL, delim);
     }
-
 }
 
 
 
-static int connectNetwork(struct MacService *Service, char *OwpnaAddr)
+static int connectNetwork(struct MacService *Service, char *OwpanAddr)
 {
+
+    int ret;
+
+    ServiceMessage *message = Service->mac_message_repo.getServiceMessage(&Service->mac_message_repo);
+    MLMEStart *mlme_start = Service->mac_message_repo.getMlmeStart(&Service->mac_message_repo);
+
+    struct CommanderMac *commander = &Service->commander_mac;
+    struct MacManagementSap *sap = &Service->mac_management_sap;
+
+    convertArray(Service, OwpanAddr, Service->mac_pib_attribute.owpan_addr);
+
+    printf("Owpan is staring...\n");
+    message->header.type = mac_management;
+    message->header.sub_type = start;
+    message->header.length = sizeof(MLMEStart);
+
+    mlme_start->reason = request;
+
+    memcpy(&mlme_start->owpan_addr, Service->mac_pib_attribute.owpan_addr, sizeof(mlme_start->owpan_addr));
+
+    mlme_start->start_time = time(NULL);
+    mlme_start->beacon_order = 13;
+    mlme_start->superframe_order = 12;
+    mlme_start->owpan_coordinator = FALSE;
+    mlme_start->coord_realighment = FALSE;
+
+    message->payload = (uint8_t *)mlme_start;
+    message->status_or_priorty = 0;
+
+    ret = commander->ops.appendCommand(commander, &sap->command, message);
+
+    ret = commander->ops.executeCommands(commander);
+    commander->ops.clearCommands(commander);
+
+    if(ret == FAIL)
+    {
+        printf("MLME Start Request is FAILED\n");
+        return FAIL;
+    }
+    else
+    {
+        printf("MLME Start Request is SUCCESSFUL\n");
+        return SUCCESS;
+    }
 
 }
 
@@ -64,7 +107,7 @@ static int createNetwork(struct MacService *Service, char *OwpanAddr)
     mlme_start->owpan_coordinator = TRUE;
     mlme_start->coord_realighment = FALSE;
 
-    message->payload = (uint8_t *) mlme_start;
+    message->payload = (uint8_t *)mlme_start;
     message->status_or_priorty = 0;
 
     ret = commander->ops.appendCommand(commander, &sap->command, message);
@@ -82,30 +125,23 @@ static int createNetwork(struct MacService *Service, char *OwpanAddr)
         printf("MLME Start Request is SUCCESSFUL\n");
         return SUCCESS;
     }
-
 }
 
 
 
-static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
+static int sendData(struct MacService *Service, char *DestinationAddr, uint8_t *Data, uint16_t Length)
 {
 
     int ret;
     ServiceMessage *message = Service->mac_message_repo.getServiceMessage(&Service->mac_message_repo);
     MCSPData *mcsp_data = Service->mac_message_repo.getMcspData(&Service->mac_message_repo);
 
-    MacFrameFormat mac_frame;
-
-    mac_frame.header.payload_length = 11;
-    mac_frame.payload = (uint8_t *)Data;
-    mac_frame.fcs = 0x20;
-
     struct CommanderMac *commander = &Service->commander_mac;
     struct MacDataSap *sap = &Service->mac_data_sap;
+    uint8_t destination_addr[6];
+    uint64_t time_stamp = time(NULL);
 
-    uint64_t destination_addr = 0x121212121212;
-    uint64_t source_addr = 0x212121212121;
-    uint64_t timestamp = 0;
+    convertArray(Service, DestinationAddr, destination_addr);
 
     message->header.type = mac_data;
     message->header.sub_type = transmit;
@@ -114,19 +150,13 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
     mcsp_data->reason = request;
 
     memcpy(mcsp_data->destination_address, (uint8_t *)&destination_addr, sizeof(mcsp_data->destination_address));
-    memcpy(mcsp_data->source_address, (uint8_t *)&source_addr, sizeof(mcsp_data->source_address));
-
-    printf("destination addr: ");
-    for(int i = 0; i<6; i++)
-        printf("%02X-", mcsp_data->destination_address[i]);
-
-    printf("\n");
+    memcpy(mcsp_data->source_address, (uint8_t *)&Service->mac_pib_attribute.owpan_addr, sizeof(mcsp_data->source_address));
 
     mcsp_data->frame_handle = 12;
-    mcsp_data->frame = (uint8_t *)&mac_frame;
+    mcsp_data->msdu = Data;
     mcsp_data->protect_enable = 3;
 
-    memcpy(mcsp_data->timestamp, (uint8_t *)&timestamp, sizeof(mcsp_data->timestamp));
+    memcpy(mcsp_data->timestamp, (uint8_t *)&time_stamp, sizeof(mcsp_data->timestamp));
 
     message->payload = (uint8_t *)mcsp_data;
 
@@ -202,7 +232,7 @@ static int convertRawtoMacFrame(uint8_t *RawData)
 
 
 
-static int receiveData(struct MacService *Service)
+static int receiveData(struct MacService *Service, char *SourceAddr)
 {
 
     int ret;
@@ -239,14 +269,11 @@ static int receiveData(struct MacService *Service)
             printf("%02X-", mcsp_data->source_address[i]);
         printf("\n");
 
-        convertRawtoMacFrame(mcsp_data->frame);
-
     }
     else
     {
         printf("MCSP Receive Request is FAILED\n");
     }
-
 }
 
 

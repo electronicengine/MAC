@@ -361,6 +361,8 @@ static void confirmDataTransmitRequest(struct DataTransmitter *Transmitter, stru
 
     transmit_data = convertConfirmMessagetoRaw(phy_repo, confirm_message, &data_index);
 
+
+
     Socket->operations.setData(Socket, transmit_data, data_index);
 
 }
@@ -379,13 +381,39 @@ static void confirmDataReceiveRequest(struct DataTransmitter *Transmitter, struc
 
     transmit_data = createIndicationMessage(phy_repo, mac_repo, &data_index);
 
+
     Socket->operations.setData(Socket, transmit_data, data_index);
 
 }
 
 
 
-static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, ServiceMessage *Message)
+static int sendDataToWireless(struct DataTransmitter *Transmitter, ServiceMessage *Message, uint8_t *Data)
+{
+
+    Transmitter->observer.wireless_socket.ops.setData(&Transmitter->observer.wireless_socket,
+                                                      Data, Message->header.length + SERVICE_MESSAGE_OFFSET + PHYDATA_SIZE_OFFSET
+                                                       + MCSPDATA_SIZE_OFFSET + MCSPDATA_SIZE_OFFSET);
+
+
+}
+
+
+
+static uint8_t *receiveDataFromWireless(struct DataTransmitter *Transmitter)
+{
+
+    struct WirelessSocket *wireless = &Transmitter->observer.wireless_socket;
+    uint8_t *transit_data = wireless->phy_repo.getRawData(&wireless->phy_repo);
+
+    wireless->ops.getData(wireless, transit_data, MAX_MESSAGE_SIZE);
+
+    return transit_data;
+}
+
+
+
+static void updateSocket(struct Observer *Obs, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData)
 {
     struct DataTransmitter *transmitter = container_of(Obs, typeof(*transmitter), observer);
 
@@ -397,9 +425,20 @@ static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, Servic
             case request:
 
                 if(Message->header.sub_type == transmit)
+                {
+
+                    sendDataToWireless(transmitter, Message, TransitData);
                     confirmDataTransmitRequest(transmitter, Socket, Message);
+
+                }
+
                 if(Message->header.sub_type == receive)
-                    confirmDataReceiveRequest(transmitter, Socket, Message);
+                {
+                    uint8_t *transit_Data = receiveDataFromWireless(transmitter);
+                    ServiceMessage *indication_message = Socket->phy_repo.setServiceData(&Socket->phy_repo, transit_Data);
+
+                    confirmDataReceiveRequest(transmitter, Socket, indication_message);
+                }
 
                 break;
 
@@ -422,10 +461,10 @@ static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, Servic
 void initDataTransmitter(struct DataTransmitter *Transmitter)
 {
 
-    Transmitter->operations.spiDataUpdate = spiDataUpdate;
+    Transmitter->operations.updateSocket = updateSocket;
 
     initObserver(&Transmitter->observer);
-    Transmitter->observer.operation.update = spiDataUpdate;
+    Transmitter->observer.operation.update = updateSocket;
 
 }
 

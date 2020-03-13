@@ -19,8 +19,8 @@
 #define BACKLOG_WIRELESS    10
 
 
-struct WirelessSocket;
 
+struct WirelessSocket;
 
 
 typedef struct

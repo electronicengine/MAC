@@ -29,7 +29,6 @@ struct SetPhy
 {
         struct SetPhyOperations operations;
         struct Observer observer;
-        struct WirelessSocket *wireless_socket;
 };
 
 

@@ -11,7 +11,7 @@ static int setData(struct WirelessSocket *Socket, uint8_t *TransmittedData, int 
 //private functions
 static pthread_t socket_thread;
 static volatile short int stop_thread = 1;
-static struct WirelessSocket *uniueq_socket;
+static struct WirelessSocket uniueq_socket;
 
 
 
@@ -23,11 +23,12 @@ int initWirelessSocket(struct WirelessSocket *Socket)
 
     if(already_exist == 1)
     {
-        Socket = uniueq_socket;
+        memcpy(Socket, &uniueq_socket, sizeof(struct WirelessSocket));
         return SUCCESS;
     }
 
     printf("initwireless...!!!\n");
+
     initMacMessageRepo(&Socket->mac_repo);
     initPhyMessageRepo(&Socket->phy_repo);
 
@@ -39,9 +40,19 @@ int initWirelessSocket(struct WirelessSocket *Socket)
 
     already_exist = 1;
 
-    uniueq_socket = Socket;
+    memcpy(&uniueq_socket, Socket, sizeof(struct WirelessSocket));
+
 
     return SUCCESS;
+}
+
+
+
+static void createSocketThread(struct WirelessSocket *Socket)
+{
+
+//    pthread_create(&socket_thread, NULL, listenSocket, Socket);
+//    pthread_detach(socket_thread);
 
 }
 
@@ -83,7 +94,6 @@ static int setData(struct WirelessSocket *Socket, uint8_t *TransmittedData, int 
         close(Socket->server_sock);
         close(Socket->client_sock);
         return rc;
-
     }
 
 }
@@ -184,13 +194,6 @@ static int openServerPort(struct WirelessSocket *Socket)
 {
 
     int len, rc;
-    static int socket_opened = 0;
-
-    if(socket_opened != 0)
-    {
-        memcpy(Socket, uniueq_socket, sizeof(struct WirelessSocket));
-        return SUCCESS;
-    }
 
     memset(&Socket->server_sockaddr, 0, sizeof(struct sockaddr_un));
     memset(&Socket->client_sockaddr, 0, sizeof(struct sockaddr_un));
@@ -253,16 +256,13 @@ static int openServerPort(struct WirelessSocket *Socket)
         return Socket->client_sock;
     }
 
-    printf("wireless Socket has been Opened\n");
 
-    socket_opened = 1;
-    uniueq_socket = Socket;
     /****************************************/
     /* Get the name of the connected socket */
     /****************************************/
     len = sizeof(Socket->client_sockaddr);
     rc = getpeername(Socket->client_sock, (struct sockaddr *) &Socket->client_sockaddr, &len);
-    if (rc == FAIL)
+    if(rc == FAIL)
     {
         printf("WIRELESS GETPEERNAME ERROR: \n");
         close(Socket->server_sock);
@@ -277,6 +277,9 @@ static int openServerPort(struct WirelessSocket *Socket)
 
 //    pthread_create(&socket_thread, NULL, startBeacon, Socket);
 //    pthread_detach(socket_thread);
+
+    printf("WIRELESS SERVER PORT HAS BEEN OPENNED\n");
+
 
 
     return SUCCESS;

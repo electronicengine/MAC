@@ -145,7 +145,6 @@ static int sendData(struct MacService *Service, uint8_t *Data, uint16_t Length)
     {
         printf("MCSP Transmite Request is FAILED\n");
     }
-
 }
 
 
@@ -202,7 +201,7 @@ static int convertRawtoMacFrame(uint8_t *RawData)
 }
 
 
-//kağıt hane diyotlar ama bilmiyorum
+
 static int receiveData(struct MacService *Service)
 {
 

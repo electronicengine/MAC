@@ -23,7 +23,6 @@
 #define __OBSERVER_H__
 
 #include <inttypes.h>
-
 #include "messagetypes.h"
 #include "wireless_socket.h"
 

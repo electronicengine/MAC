@@ -8,7 +8,6 @@ static int startOwpan(struct SetPhy *Set, uint8_t OwpanCoord)
 {
     printf("Owpan Starting... Owpa Coord: %d\n", OwpanCoord);
 
-
     if(OwpanCoord == 1)
         Set->observer.wireless_socket.ops.openServerPort(&Set->observer.wireless_socket);
     else if(OwpanCoord == 0)
@@ -66,7 +65,7 @@ static void confirmRequest(struct SetPhy *Set, struct MacSocket *Socket, Service
 
 
 
-static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, ServiceMessage *Message)
+static void updateSocket(struct Observer *Obs, struct MacSocket *Socket, ServiceMessage *Message, uint8_t *TransitData)
 {
 
     struct SetPhy *set_phy = container_of(Obs, typeof(*set_phy), observer);
@@ -108,11 +107,8 @@ static void spiDataUpdate(struct Observer *Obs, struct MacSocket *Socket, Servic
 void initSetPhy(struct SetPhy *Setphy)
 {
 
-    Setphy->operations.spiDataUpdate = spiDataUpdate;
-
-
     initObserver(&Setphy->observer);
-    Setphy->observer.operation.update = spiDataUpdate;
+    Setphy->observer.operation.update = updateSocket;
 
 }
 

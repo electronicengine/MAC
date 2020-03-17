@@ -98,7 +98,8 @@ static int startOwpan(struct MacManagementSap *Sap, ServiceMessage *Message)
 
     printf("Mac StartOwpan\n");
 
-    makeSetPhyMessage(Sap, phy_cca_mode, CCA_MODE);
+    makeSetPhyMessage(Sap, phy_current_channel, 0);
+    makeSetPhyMessage(Sap, phy_beacon_order, mlme_start->beacon_order);
     makeSetPhyMessage(Sap, phy_beacon_order, mlme_start->beacon_order);
     makeSetPhyMessage(Sap, phy_superframe_order, mlme_start->superframe_order);
     makeSetPhyMessage(Sap, phy_owpan_coordinator, mlme_start->owpan_coordinator);

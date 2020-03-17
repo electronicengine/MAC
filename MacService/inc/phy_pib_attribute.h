@@ -11,6 +11,7 @@
 enum PhyPIBAttributeId
 {
 
+    phy_current_channel,
     phy_cca_mode,
     phy_owpan_coordinator,
     phy_beacon_order,
@@ -23,6 +24,7 @@ enum PhyPIBAttributeId
 struct PhyPIBAttribute
 {
 
+    uint8_t     current_channle;
     uint8_t     cca_mode;
     uint8_t     owpan_coordinatior;
     uint8_t     beacon_order;
